@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './schemas/app.schema';
 import { appConfig } from './config';
-import { CreateTransactionModule } from './create-transaction/create-transaction.module';
-import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { HttpInterceptor } from './interceptor/http.interceptor';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -16,13 +13,30 @@ import { HttpInterceptor } from './interceptor/http.interceptor';
       validationSchema: configValidationSchema,
       load: [appConfig]
     }),
-    CreateTransactionModule,
-    ScheduleModule.forRoot()
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: configService.get<any>('appConfig.msyqlConnection.type'),
+        host: configService.get<string>('appConfig.msyqlConnection.host'),
+        port: configService.get<number>('appConfig.msyqlConnection.port'),
+        username: configService.get<string>(
+          'appConfig.msyqlConnection.username'
+        ),
+        password: configService.get<string>(
+          'appConfig.msyqlConnection.password'
+        ),
+        database: configService.get<string>(
+          'appConfig.msyqlConnection.database'
+        ),
+        synchronize: configService.get<boolean>(
+          'appConfig.msyqlConnection.synchronize'
+        ),
+        autoLoadEntities: true
+      }),
+      inject: [ConfigService]
+    })
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_INTERCEPTOR, useClass: HttpInterceptor }
-  ]
+  providers: [AppService]
 })
 export class AppModule {}

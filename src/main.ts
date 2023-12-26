@@ -1,8 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { InitLogger } from './logger/initializer';
-import LOGGER_CONFIG from './config/logger.config';
 import {
   FastifyAdapter,
   NestFastifyApplication
@@ -28,19 +26,11 @@ async function initExpress(): Promise<NestExpressApplication> {
  * Se deja elegir fastify o express como FM vars de entorno
  */
 async function bootstrap() {
-  InitLogger.setConfig(LOGGER_CONFIG);
-
   const isFastify: boolean = process.env.FASTIFY_FM_HTTP === 'enabled';
 
   const app = await (isFastify ? initFastify() : initExpress());
 
   const configService = app.get(ConfigService);
-
-  InitLogger.addTracing(
-    app,
-    LOGGER_CONFIG.nameSpaceHook,
-    configService.get<string>('appConfig.app_name')
-  );
 
   const appPort: number = isFastify
     ? configService.get<number>('appConfig.fastify_port')

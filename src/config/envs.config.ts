@@ -4,7 +4,15 @@ const baseConfig = {
   fastify_port: parseInt(process.env.FASTIFY_PORT) || 8080,
   env: process.env.NODE_ENV || 'local',
   app_version: process.env.npm_package_version,
-  msyqlConnection: {}
+  msyqlConnection: {
+    type: process.env.DB_TYPE || 'mysql',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_HOST || '3306', 10),
+    username: process.env.DB_USERNAME || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_SCHEMA || 'transport',
+    synchronize: !!process.env.DB_SYNCHRONIZE
+  }
 };
 
 const setVarsEnv = (aditionalEnvConfig = {}) => {
