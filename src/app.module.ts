@@ -9,6 +9,8 @@ import { UtilsModule } from './utils/utils.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './authentication/auth.module';
 import { VerifyRoleMiddleware } from './middlewares/verify-role.middleware';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { GenerateTraceIdInterceptor } from './interceptor/generate-trace-id.interceptor';
 
 @Module({
   imports: [
@@ -44,7 +46,13 @@ import { VerifyRoleMiddleware } from './middlewares/verify-role.middleware';
     AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: GenerateTraceIdInterceptor
+    }
+  ]
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

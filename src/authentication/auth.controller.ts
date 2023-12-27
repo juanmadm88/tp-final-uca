@@ -4,7 +4,8 @@ import {
   Post,
   HttpCode,
   HttpStatus,
-  Logger
+  Logger,
+  Headers
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO, UserDTO } from '../user/dtos';
@@ -16,7 +17,10 @@ export class AuthController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('sign-up')
-  async signUp(@Body() dto: UserDTO) {
+  async signUp(
+    @Body() dto: UserDTO,
+    @Headers('unique-trace-id') uniqueTraceId: string
+  ) {
     try {
       await this.authService.signUp(dto);
     } catch (error) {
@@ -24,14 +28,18 @@ export class AuthController {
         level: 'error',
         message: 'An Error occurred while trying to log',
         method: 'sign-up',
-        err: error
+        err: error,
+        'unique-trace-id': uniqueTraceId
       });
       throw error;
     }
   }
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() dto: LoginDTO) {
+  async login(
+    @Body() dto: LoginDTO,
+    @Headers('unique-trace-id') uniqueTraceId: string
+  ) {
     try {
       return await this.authService.login(dto);
     } catch (error) {
@@ -39,7 +47,8 @@ export class AuthController {
         level: 'error',
         message: 'An Error occurred while trying to log',
         err: error,
-        method: 'login'
+        method: 'login',
+        'unique-trace-id': uniqueTraceId
       });
       throw error;
     }

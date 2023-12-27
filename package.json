@@ -47,6 +47,7 @@
     "rxjs": "^7.2.0",
     "semver": "^7.5.3",
     "typeorm": "^0.3.17",
+    "uuid": "^9.0.1",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"
   },
