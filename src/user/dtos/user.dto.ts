@@ -1,18 +1,22 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import {
   IsOptional,
   IsString,
   IsNotEmpty,
   IsNumber,
-  IsEmail
+  IsEmail,
+  IsNotEmptyObject,
+  ValidateNested
 } from 'class-validator';
+import { RoleDTO } from './role.dto';
 
 /* istanbul ignore file */
 
 export class UserDTO {
   constructor(args: any) {
     if (args) {
-      const { lastName, firstName, email, dni, username, password, id } = args;
+      const { lastName, firstName, email, dni, username, password, id, role } =
+        args;
       if (lastName) this.lastName = lastName;
       if (firstName) this.firstName = firstName;
       if (email) this.email = email;
@@ -20,6 +24,7 @@ export class UserDTO {
       if (username) this.username = username;
       if (password) this.password = password;
       if (id) this.id = id;
+      if (role) this.role = role;
     }
   }
 
@@ -58,6 +63,19 @@ export class UserDTO {
   @IsOptional()
   @IsNumber()
   private id?: number;
+
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Expose()
+  @Type(() => RoleDTO)
+  private role: RoleDTO;
+
+  public getRole(): RoleDTO {
+    return this.role;
+  }
+  public setRole(role: RoleDTO) {
+    this.role = role;
+  }
 
   public getLastName(): string {
     return this.lastName;

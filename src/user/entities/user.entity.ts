@@ -1,10 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn
+} from 'typeorm';
+import { Role } from './role.entity';
 
 @Entity('users')
 export class User {
-  /**
-   * this decorator will help to auto generate id for the table.
-   */
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,4 +29,10 @@ export class User {
 
   @Column({ type: 'varchar', length: 45, unique: true })
   dni: string;
+
+  @OneToOne(() => Role, {
+    eager: true
+  })
+  @JoinColumn({ name: 'id_role' })
+  role: Role;
 }

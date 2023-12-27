@@ -19,6 +19,7 @@ export class UserService {
     user.firstName = dto.getFirstName();
     user.password = dto.getPassword();
     user.username = dto.getUsername();
+    user.role = dto.getRole() as any;
     return this.utils.buildDTO(await this.userRepository.save(user), UserDTO);
   }
   async findAnUser(args: any): Promise<UserDTO> {
