@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsOptional, IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
@@ -12,11 +13,23 @@ export class RoleDTO {
     }
   }
 
+  @ApiProperty({
+    name: 'description',
+    type: 'string',
+    required: true,
+    description: 'The Role description '
+  })
   @Expose()
   @IsNotEmpty()
   @IsString()
   private description: string;
 
+  @ApiProperty({
+    name: 'id',
+    type: 'number',
+    required: false,
+    description: 'The Role id '
+  })
   @Expose()
   @IsOptional()
   @IsNumber()

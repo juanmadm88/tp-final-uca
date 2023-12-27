@@ -10,6 +10,7 @@ import * as displayRoutes from 'express-routemap';
 import { ValidationPipe } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { LoggerService } from './logger/logger.service';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function initFastify(): Promise<NestFastifyApplication> {
   const loggerService = new LoggerService();
@@ -38,6 +39,15 @@ async function bootstrap() {
   const isFastify: boolean = process.env.FASTIFY_FM_HTTP === 'enabled';
 
   const app = await (isFastify ? initFastify() : initExpress());
+
+  const config = new DocumentBuilder()
+    .setTitle('Transport example')
+    .setDescription('The Transport API description')
+    .setVersion('1.0')
+    .addTag('Transport')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   const configService = app.get(ConfigService);
 

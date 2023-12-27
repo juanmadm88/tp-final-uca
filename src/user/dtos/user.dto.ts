@@ -9,6 +9,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { RoleDTO } from './role.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
 /* istanbul ignore file */
 
@@ -28,42 +29,90 @@ export class UserDTO {
     }
   }
 
+  @ApiProperty({
+    name: 'lastName',
+    type: 'string',
+    required: false,
+    description: 'The User last name '
+  })
   @Expose()
   @IsOptional()
   @IsString()
   private lastName?: string;
 
+  @ApiProperty({
+    name: 'firstName',
+    type: 'string',
+    required: false,
+    description: 'The User first name '
+  })
   @Expose()
   @IsOptional()
   @IsString()
   private firstName?: string;
 
+  @ApiProperty({
+    name: 'email',
+    type: 'string',
+    required: true,
+    description: 'The User email '
+  })
   @Expose()
   @IsNotEmpty()
   @IsString()
   @IsEmail()
   private email: string;
 
+  @ApiProperty({
+    name: 'dni',
+    type: 'string',
+    required: true,
+    description: 'The User dni '
+  })
   @Expose()
   @IsNotEmpty()
   @IsString()
   private dni: string;
 
+  @ApiProperty({
+    name: 'username',
+    type: 'string',
+    required: true,
+    description: 'The User Name '
+  })
   @Expose()
   @IsNotEmpty()
   @IsString()
   private username: string;
 
+  @ApiProperty({
+    name: 'password',
+    type: 'string',
+    required: true,
+    description: 'The User password '
+  })
   @Expose()
   @IsNotEmpty()
   @IsString()
   private password: string;
 
+  @ApiProperty({
+    name: 'id',
+    type: 'number',
+    required: false,
+    description: 'The User id '
+  })
   @Expose()
   @IsOptional()
   @IsNumber()
   private id?: number;
 
+  @ApiProperty({
+    name: 'role',
+    type: RoleDTO,
+    required: true,
+    description: 'The User Role '
+  })
   @IsNotEmptyObject()
   @ValidateNested()
   @Expose()
