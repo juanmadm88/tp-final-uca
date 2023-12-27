@@ -93,7 +93,8 @@
       ".dto.ts",
       ".providers.ts",
       "index.ts",
-      ".schema.ts"
+      ".schema.ts",
+      ".entity.ts"
     ],
     "moduleFileExtensions": [
       "js",
