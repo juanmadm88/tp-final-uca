@@ -18,7 +18,6 @@ export class LoggerService {
           req = { headers: {} };
         }
 
-        let msg = `${timestamp} [${level}] : ${message} `;
         const json: any = {
           timestamp,
           level,
@@ -30,7 +29,7 @@ export class LoggerService {
           json.error = err.stack || err;
         }
 
-        msg = JSON.stringify(json);
+        const msg = JSON.stringify(json);
         return msg;
       }
     );
