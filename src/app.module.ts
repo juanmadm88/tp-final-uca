@@ -48,6 +48,6 @@ import { VerifyRoleMiddleware } from './middlewares/verify-role.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).exclude('/auth/*')
+    consumer.apply(VerifyRoleMiddleware).exclude('/auth/*');
   }
 }
