@@ -23,8 +23,7 @@ export class LoggerService {
           timestamp,
           level,
           ...metadata,
-          message,
-          error: {}
+          message
         };
 
         if (err) {
