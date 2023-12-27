@@ -8,18 +8,27 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as displayRoutes from 'express-routemap';
 import { ValidationPipe } from '@nestjs/common';
+import { WinstonModule } from 'nest-winston';
+import { LoggerService } from './logger/logger.service';
 
 async function initFastify(): Promise<NestFastifyApplication> {
+  const loggerService = new LoggerService();
   const isFastifyLogger: boolean = process.env.FASTIFY_FM_LOGGER === 'enabled';
   const configFastify = { logger: isFastifyLogger };
   return NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(configFastify)
+    new FastifyAdapter(configFastify),
+    {
+      logger: WinstonModule.createLogger(loggerService.createLoggerConfig)
+    }
   );
 }
 
 async function initExpress(): Promise<NestExpressApplication> {
-  return NestFactory.create<NestExpressApplication>(AppModule);
+  const loggerService = new LoggerService();
+  return NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: WinstonModule.createLogger(loggerService.createLoggerConfig)
+  });
 }
 
 /**

@@ -40,12 +40,15 @@
     "class-validator": "^0.14.0",
     "express-routemap": "^1.6.0",
     "mysql2": "^3.6.5",
+    "nest-winston": "^1.9.4",
     "node-request-context": "^1.0.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "semver": "^7.5.3",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
