@@ -12,7 +12,12 @@ const baseConfig = {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_SCHEMA || 'transport',
     synchronize: !!process.env.DB_SYNCHRONIZE
-  }
+  },
+  token: {
+    secret: process.env.TOKEN_SECRET || 'thisIsAkeyforUcaFinalTp$',
+    expiration: process.env.TOKEN_EXPIRATION || '600s'
+  },
+  salt: parseInt(process.env.ENCRIPTATION_SALT || '10', 10)
 };
 
 const setVarsEnv = (aditionalEnvConfig = {}) => {

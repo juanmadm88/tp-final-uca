@@ -5,6 +5,9 @@ import { appConfig } from './config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UtilsModule } from './utils/utils.module';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './authentication/auth.module';
 
 @Module({
   imports: [
@@ -34,7 +37,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         autoLoadEntities: true
       }),
       inject: [ConfigService]
-    })
+    }),
+    UtilsModule,
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService]
