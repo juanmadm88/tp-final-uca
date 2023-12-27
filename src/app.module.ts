@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './schemas/app.schema';
 import { appConfig } from './config';
@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UtilsModule } from './utils/utils.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './authentication/auth.module';
+import { VerifyRoleMiddleware } from './middlewares/verify-role.middleware';
 
 @Module({
   imports: [
@@ -45,4 +46,8 @@ import { AuthModule } from './authentication/auth.module';
   controllers: [AppController],
   providers: [AppService]
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(VerifyRoleMiddleware).exclude('/auth/*')
+  }
+}
