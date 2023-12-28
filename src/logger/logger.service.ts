@@ -12,17 +12,14 @@ export class LoggerService {
       maxFiles: '1d'
     });
 
-    this.myFormat = winston.format.printf(({ level = 'info', message, timestamp, req, err, ...metadata }) => {
-      if (!req) {
-        req = { headers: {} };
-      }
-
+    this.myFormat = winston.format.printf(({ level, message, timestamp, req, err, ...metadata }) => {
       const json: any = {
         timestamp,
         level,
         ...metadata,
         message
       };
+      if (req) json.request = req;
 
       if (err) {
         json.error = err.stack || err;
