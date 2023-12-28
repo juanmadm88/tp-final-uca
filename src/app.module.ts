@@ -25,18 +25,10 @@ import { GenerateTraceIdInterceptor } from './interceptor/generate-trace-id.inte
         type: configService.get<any>('appConfig.msyqlConnection.type'),
         host: configService.get<string>('appConfig.msyqlConnection.host'),
         port: configService.get<number>('appConfig.msyqlConnection.port'),
-        username: configService.get<string>(
-          'appConfig.msyqlConnection.username'
-        ),
-        password: configService.get<string>(
-          'appConfig.msyqlConnection.password'
-        ),
-        database: configService.get<string>(
-          'appConfig.msyqlConnection.database'
-        ),
-        synchronize: configService.get<boolean>(
-          'appConfig.msyqlConnection.synchronize'
-        ),
+        username: configService.get<string>('appConfig.msyqlConnection.username'),
+        password: configService.get<string>('appConfig.msyqlConnection.password'),
+        database: configService.get<string>('appConfig.msyqlConnection.database'),
+        synchronize: configService.get<boolean>('appConfig.msyqlConnection.synchronize'),
         autoLoadEntities: true
       }),
       inject: [ConfigService]

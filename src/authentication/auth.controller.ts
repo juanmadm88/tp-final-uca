@@ -1,23 +1,7 @@
-import {
-  Body,
-  Controller,
-  Post,
-  HttpCode,
-  HttpStatus,
-  Logger,
-  Headers
-} from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, Logger, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO, UserDTO } from '../user/dtos';
-import {
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-  ApiHeader
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiHeader } from '@nestjs/swagger';
 import { Jwt } from './common';
 @ApiTags('Auth')
 @Controller('auth')
@@ -39,10 +23,7 @@ export class AuthController {
     required: false
   })
   @Post('sign-up')
-  async signUp(
-    @Body() dto: UserDTO,
-    @Headers('unique-trace-id') uniqueTraceId: string
-  ) {
+  async signUp(@Body() dto: UserDTO, @Headers('unique-trace-id') uniqueTraceId: string) {
     try {
       await this.authService.signUp(dto);
     } catch (error) {
@@ -70,10 +51,7 @@ export class AuthController {
     required: false
   })
   @Post('login')
-  async login(
-    @Body() dto: LoginDTO,
-    @Headers('unique-trace-id') uniqueTraceId: string
-  ): Promise<Jwt> {
+  async login(@Body() dto: LoginDTO, @Headers('unique-trace-id') uniqueTraceId: string): Promise<Jwt> {
     try {
       return await this.authService.login(dto);
     } catch (error) {

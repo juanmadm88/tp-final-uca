@@ -1,13 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import {
-  IsOptional,
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsEmail,
-  IsNotEmptyObject,
-  ValidateNested
-} from 'class-validator';
+import { IsOptional, IsString, IsNotEmpty, IsNumber, IsEmail, IsNotEmptyObject, ValidateNested } from 'class-validator';
 import { RoleDTO } from './role.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -16,8 +8,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UserDTO {
   constructor(args: any) {
     if (args) {
-      const { lastName, firstName, email, dni, username, password, id, role } =
-        args;
+      const { lastName, firstName, email, dni, username, password, id, role } = args;
       if (lastName) this.lastName = lastName;
       if (firstName) this.firstName = firstName;
       if (email) this.email = email;

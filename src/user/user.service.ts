@@ -7,19 +7,13 @@ import { UserDTO } from './dtos';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-    private utils: UtilsService
-  ) {}
+  constructor(@InjectRepository(User) private readonly userRepository: Repository<User>, private utils: UtilsService) {}
   async createUser(dto: UserDTO): Promise<UserDTO> {
     const user: User = this.buildUserEntity(dto);
     return this.utils.buildDTO(await this.userRepository.save(user), UserDTO);
   }
   async findAnUser(args: any): Promise<UserDTO> {
-    return this.utils.buildDTO(
-      await this.userRepository.findOneBy(args),
-      UserDTO
-    );
+    return this.utils.buildDTO(await this.userRepository.findOneBy(args), UserDTO);
   }
   private buildUserEntity(dto: UserDTO): User {
     const user: User = new User();

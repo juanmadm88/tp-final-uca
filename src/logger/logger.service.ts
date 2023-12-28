@@ -12,27 +12,25 @@ export class LoggerService {
       maxFiles: '1d'
     });
 
-    this.myFormat = winston.format.printf(
-      ({ level = 'info', message, timestamp, req, err, ...metadata }) => {
-        if (!req) {
-          req = { headers: {} };
-        }
-
-        const json: any = {
-          timestamp,
-          level,
-          ...metadata,
-          message
-        };
-
-        if (err) {
-          json.error = err.stack || err;
-        }
-
-        const msg = JSON.stringify(json);
-        return msg;
+    this.myFormat = winston.format.printf(({ level = 'info', message, timestamp, req, err, ...metadata }) => {
+      if (!req) {
+        req = { headers: {} };
       }
-    );
+
+      const json: any = {
+        timestamp,
+        level,
+        ...metadata,
+        message
+      };
+
+      if (err) {
+        json.error = err.stack || err;
+      }
+
+      const msg = JSON.stringify(json);
+      return msg;
+    });
 
     this.createLoggerConfig = {
       level: 'warn',
@@ -46,10 +44,7 @@ export class LoggerService {
         this.myFormat
       ),
 
-      transports: [
-        new winston.transports.Console({ level: 'info' }),
-        this.dailyRotateFileTransport
-      ]
+      transports: [new winston.transports.Console({ level: 'info' }), this.dailyRotateFileTransport]
     };
   }
 }

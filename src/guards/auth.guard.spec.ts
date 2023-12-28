@@ -15,11 +15,7 @@ describe('AuthGuard ', () => {
       })
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthGuard,
-        JwtService,
-        { provide: ConfigService, useValue: mockedConfigService }
-      ]
+      providers: [AuthGuard, JwtService, { provide: ConfigService, useValue: mockedConfigService }]
     }).compile();
     guard = module.get<AuthGuard>(AuthGuard);
   });
@@ -42,9 +38,7 @@ describe('AuthGuard ', () => {
         getType: jest.fn().mockReturnThis(),
         getResponse: jest.fn().mockReturnThis()
       };
-      (
-        executionContext.switchToHttp().getRequest as jest.Mock<any, any>
-      ).mockReturnValueOnce({
+      (executionContext.switchToHttp().getRequest as jest.Mock<any, any>).mockReturnValueOnce({
         body: { data: 'mocked data' },
         headers: { 'x-flow-country': 'pe' }
       });
@@ -68,9 +62,7 @@ describe('AuthGuard ', () => {
         getType: jest.fn().mockReturnThis(),
         getResponse: jest.fn().mockReturnThis()
       };
-      (
-        executionContext.switchToHttp().getRequest as jest.Mock<any, any>
-      ).mockReturnValueOnce({
+      (executionContext.switchToHttp().getRequest as jest.Mock<any, any>).mockReturnValueOnce({
         body: { data: 'mocked data' },
         headers: { authorization: 'Bearer Sarasa' }
       });
@@ -95,11 +87,7 @@ describe('AuthGuard ', () => {
         })
       };
       const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          AuthGuard,
-          { provide: JwtService, useValue: mockedJwtService },
-          { provide: ConfigService, useValue: mockedConfigService }
-        ]
+        providers: [AuthGuard, { provide: JwtService, useValue: mockedJwtService }, { provide: ConfigService, useValue: mockedConfigService }]
       }).compile();
       guard = module.get<AuthGuard>(AuthGuard);
       const executionContext = {
@@ -114,9 +102,7 @@ describe('AuthGuard ', () => {
         getType: jest.fn().mockReturnThis(),
         getResponse: jest.fn().mockReturnThis()
       };
-      (
-        executionContext.switchToHttp().getRequest as jest.Mock<any, any>
-      ).mockReturnValueOnce({
+      (executionContext.switchToHttp().getRequest as jest.Mock<any, any>).mockReturnValueOnce({
         body: { data: 'mocked data' },
         headers: {
           authorization: `Bearer 123456`
