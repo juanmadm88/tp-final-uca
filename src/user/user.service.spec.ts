@@ -28,9 +28,6 @@ describe('UserService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
   it('expected an Object as a response when calling findAnUser method ', async () => {
     jest.spyOn(mockedUtilsService, 'buildDTO').mockImplementation(() =>
       Promise.resolve(
@@ -42,7 +39,7 @@ describe('UserService', () => {
     const result = await service.findAnUser({ id: 1 });
     expect(result.getId()).toBe(1);
   });
-  it('prueba ', async () => {
+  it('expect created user successfully ', async () => {
     const dto: UserDTO = plainToInstance(UserDTO, {
       email: 'sarasa@gmail.com',
       password: '1232145',
