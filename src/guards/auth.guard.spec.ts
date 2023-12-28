@@ -81,7 +81,7 @@ describe('AuthGuard ', () => {
         expect(error).toBeInstanceOf(UnauthorizedException);
       }
     });
-    it('prueba', async () => {
+    it('expected result to be true ', async () => {
       const mockedConfigService = {
         get: jest.fn((key: string) => {
           if (key === 'appConfig.token.secret') {
