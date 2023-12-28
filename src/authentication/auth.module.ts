@@ -3,9 +3,10 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UtilsService } from 'src/utils/utils.service';
 
 @Module({
-  providers: [AuthService],
+  providers: [AuthService, UtilsService],
   controllers: [AuthController],
   imports: [
     JwtModule.registerAsync({

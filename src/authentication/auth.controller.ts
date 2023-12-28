@@ -1,13 +1,16 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, Logger, Headers } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, Logger, Headers, UseFilters } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO, UserDTO } from '../user/dtos';
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiHeader } from '@nestjs/swagger';
 import { Jwt } from './common';
+import { HttpExceptionFilter } from '../filter/http-exception.filter';
+import { UtilsService } from '../utils/utils.service';
 @ApiTags('Auth')
 @Controller('auth')
+@UseFilters(HttpExceptionFilter)
 export class AuthController {
   private logger = new Logger(AuthController.name);
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private utilsService: UtilsService) {}
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Sign up a new User' })
@@ -34,7 +37,7 @@ export class AuthController {
         err: error,
         'unique-trace-id': uniqueTraceId
       });
-      throw error;
+      this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
     }
   }
   @HttpCode(HttpStatus.OK)
@@ -62,7 +65,7 @@ export class AuthController {
         method: 'login',
         'unique-trace-id': uniqueTraceId
       });
-      throw error;
+      this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
     }
   }
 }

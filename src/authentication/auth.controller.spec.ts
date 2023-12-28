@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { Logger } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import { LoginDTO, UserDTO } from '../user/dtos';
 import { plainToInstance } from 'class-transformer';
+import { UtilsService } from '../utils/utils.service';
 describe('AuthController', () => {
   let controller: AuthController;
   const mockedAuthService = {
@@ -16,10 +17,7 @@ describe('AuthController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [
-        { provide: AuthService, useValue: mockedAuthService },
-        { provide: Logger, useValue: mockedLogger }
-      ]
+      providers: [{ provide: AuthService, useValue: mockedAuthService }, { provide: Logger, useValue: mockedLogger }, UtilsService]
     }).compile();
     controller = app.get<AuthController>(AuthController);
   });
@@ -54,6 +52,18 @@ describe('AuthController', () => {
       await controller.signUp(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
     } catch (error) {
       expect(error).toBeDefined();
+    }
+  });
+  it('expect a BadRequestException when signUp method return a BadRequestException', async () => {
+    jest.spyOn(mockedAuthService, 'signUp').mockImplementation(() => {
+      throw new BadRequestException();
+    });
+    const dto: UserDTO = plainToInstance(UserDTO, { email: 'sarasa@gmail.com', password: '1234', username: 'pepito' });
+    try {
+      await controller.signUp(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error).toBeInstanceOf(BadRequestException);
     }
   });
 });
