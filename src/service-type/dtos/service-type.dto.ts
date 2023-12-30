@@ -39,13 +39,13 @@ export class ServiceTypeDTO {
   @ApiProperty({
     name: 'isActive',
     type: 'boolean',
-    required: true,
+    required: false,
     description: 'Indicates whether is Service is active or not '
   })
   @Expose()
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  private isActive: boolean;
+  private isActive?: boolean;
 
   public getDescription(): string {
     return this.description;
