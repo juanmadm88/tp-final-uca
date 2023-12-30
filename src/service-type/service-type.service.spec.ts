@@ -45,7 +45,7 @@ describe('ServiceTypeService', () => {
     const dto: Array<ServiceTypeDTO> = plainToInstance(ServiceTypeDTO, result);
     mockedFind.mockImplementationOnce(() => Promise.resolve(result));
     mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
-    const response = await service.findAll();
+    const response = await service.findAll({ skip: 2, take: 1 });
     expect(response).toBeDefined();
   });
   it('expect update method to be called succesfully ', async () => {

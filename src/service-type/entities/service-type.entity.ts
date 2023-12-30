@@ -8,6 +8,6 @@ export class ServiceType {
   @Column({ type: 'varchar', length: 45 })
   description: string;
 
-  @Column({ type: Boolean, name: 'is_active', default: true })
+  @Column({ type: Boolean, name: 'is_active' })
   isActive: boolean;
 }
