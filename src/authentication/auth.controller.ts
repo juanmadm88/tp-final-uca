@@ -33,7 +33,7 @@ export class AuthController {
       this.logger.log({
         level: 'error',
         message: 'An Error occurred while trying to log',
-        method: 'sign-up',
+        method: this.signUp.name,
         err: error,
         'unique-trace-id': uniqueTraceId
       });
@@ -62,7 +62,7 @@ export class AuthController {
         level: 'error',
         message: 'An Error occurred while trying to log',
         err: error,
-        method: 'login',
+        method: this.signUp.name,
         'unique-trace-id': uniqueTraceId
       });
       this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
