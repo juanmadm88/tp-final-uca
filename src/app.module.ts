@@ -12,7 +12,6 @@ import { VerifyRoleMiddleware } from './middlewares/verify-role.middleware';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GenerateTraceIdInterceptor } from './interceptor/generate-trace-id.interceptor';
 import { ServiceTypeModule } from './service-type/service-type.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -34,16 +33,6 @@ import { JwtModule } from '@nestjs/jwt';
         autoLoadEntities: true
       }),
       inject: [ConfigService]
-    }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('appConfig.token.secret'),
-        signOptions: {
-          expiresIn: configService.get<string>('appConfig.token.expiration')
-        }
-      })
     }),
     UtilsModule,
     UserModule,

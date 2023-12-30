@@ -26,13 +26,10 @@ export class AuthService {
     });
     if (!user || !(await bcrypt.compare(dto.getPassword(), user.getPassword()))) throw new UnauthorizedException(Constants.WRONG_PASSWORD_USERNAME);
     return {
-      access_token: await this.jwtService.signAsync(
-        {
-          id: user.getId(),
-          username: user.getUsername()
-        },
-        { secret: this.configService.get<string>('appConfig.token.secret') }
-      ),
+      access_token: await this.jwtService.signAsync({
+        id: user.getId(),
+        username: user.getUsername()
+      }),
       user
     };
   }
