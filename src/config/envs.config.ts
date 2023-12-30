@@ -4,7 +4,7 @@ const baseConfig = {
   fastify_port: parseInt(process.env.FASTIFY_PORT) || 8080,
   env: process.env.NODE_ENV || 'local',
   app_version: process.env.npm_package_version,
-  app_prefix: process.env.API_PREFIX || 'v1/transport/',
+  app_prefix: process.env.API_PREFIX || 'api/v1/transport/',
   msyqlConnection: {
     type: process.env.DB_TYPE || 'mysql',
     host: process.env.DB_HOST || 'localhost',

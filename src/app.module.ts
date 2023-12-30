@@ -50,6 +50,6 @@ import { ServiceTypeModule } from './service-type/service-type.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).exclude({ path: 'v1/transport/auth/', method: RequestMethod.ALL });
+    consumer.apply(VerifyRoleMiddleware).exclude({ path: 'api/v1/transport/auth/', method: RequestMethod.ALL });
   }
 }
