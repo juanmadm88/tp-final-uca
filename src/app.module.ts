@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './schemas/app.schema';
 import { appConfig } from './config';
@@ -50,6 +50,6 @@ import { ServiceTypeModule } from './service-type/service-type.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).exclude('/auth/*');
+    consumer.apply(VerifyRoleMiddleware).exclude({ path: 'v1/transport/auth/', method: RequestMethod.ALL });
   }
 }

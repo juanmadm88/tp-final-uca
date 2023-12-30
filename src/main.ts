@@ -4,7 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { ConfigService } from '@nestjs/config';
 import * as displayRoutes from 'express-routemap';
-import { ValidationPipe } from '@nestjs/common';
+import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { LoggerService } from './logger/logger.service';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -50,6 +50,10 @@ async function bootstrap() {
       disableErrorMessages: configService.get<string>('appConfig.env')?.toUpperCase() == 'PROD' ? true : false
     })
   );
+
+  app.setGlobalPrefix(configService.get<string>('appConfig.app_prefix'), {
+    exclude: [{ path: 'health', method: RequestMethod.GET }]
+  });
 
   const rabbitConfig: object = configService.get<object>('appConfig.rabbitConfig');
   app.connectMicroservice(rabbitConfig);
