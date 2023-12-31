@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './schemas/app.schema';
 import { appConfig } from './config';
@@ -13,6 +13,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GenerateTraceIdInterceptor } from './interceptor/generate-trace-id.interceptor';
 import { ServiceTypeModule } from './service-type/service-type.module';
 import { SeatTypeModule } from './seat-type/seat-type.module';
+import { ServiceTypeController } from './service-type/service-type.controller';
+import { SeatTypeController } from './seat-type/seat-type.controller';
 
 @Module({
   imports: [
@@ -52,6 +54,6 @@ import { SeatTypeModule } from './seat-type/seat-type.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).exclude({ path: 'api/v1/transport/auth/', method: RequestMethod.ALL }, { path: '*', method: RequestMethod.GET });
+    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController);
   }
 }

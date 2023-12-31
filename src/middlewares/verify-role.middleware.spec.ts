@@ -31,6 +31,20 @@ describe('VerifyRoleMiddleware', () => {
     middleware.use(req, { setHeader: jest.fn() }, nextSpy);
     expect(nextSpy).toHaveBeenCalled();
   });
+  it('should be called next function when htpp method is equals "GET" ', () => {
+    const nextSpy: NextFunction = jest.fn().mockImplementation(() => false);
+    const req: any = {
+      headers: {
+        user_role: 'admin'
+      },
+      body: {
+        attribute: 'sarasa'
+      },
+      method: 'GET'
+    };
+    middleware.use(req, { setHeader: jest.fn() }, nextSpy);
+    expect(nextSpy).toHaveBeenCalled();
+  });
   it('expected forbidden error to be returned ', async () => {
     const nextSpy: NextFunction = jest.fn().mockImplementation(() => false);
     const req: any = {
