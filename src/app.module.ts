@@ -15,6 +15,8 @@ import { ServiceTypeModule } from './service-type/service-type.module';
 import { SeatTypeModule } from './seat-type/seat-type.module';
 import { ServiceTypeController } from './service-type/service-type.controller';
 import { SeatTypeController } from './seat-type/seat-type.controller';
+import { BrandController } from './brand/brand.controller';
+import { BrandModule } from './brand/brand.module';
 
 @Module({
   imports: [
@@ -41,7 +43,8 @@ import { SeatTypeController } from './seat-type/seat-type.controller';
     UserModule,
     AuthModule,
     ServiceTypeModule,
-    SeatTypeModule
+    SeatTypeModule,
+    BrandModule
   ],
   controllers: [AppController],
   providers: [
@@ -54,6 +57,6 @@ import { SeatTypeController } from './seat-type/seat-type.controller';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController);
+    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController, BrandController);
   }
 }
