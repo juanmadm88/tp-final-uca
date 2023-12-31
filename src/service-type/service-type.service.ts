@@ -13,7 +13,7 @@ export class ServiceTypeService {
     const pagination: any = {};
     if (paginationOptions.skip) pagination.skip = paginationOptions.skip;
     if (paginationOptions.take) pagination.take = paginationOptions.take;
-    return this.utils.buildDTO(await this.repository.find(pagination), ServiceTypeDTO);
+    return this.utils.buildDTO(await this.repository.find({ where: { isActive: true }, ...pagination }), ServiceTypeDTO);
   }
   async update(id: number, updateDTO: UpdateServiceTypeDTO): Promise<any> {
     const entity: ServiceType = this.buildServiceTypeEntity(updateDTO);

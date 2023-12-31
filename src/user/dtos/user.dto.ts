@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, IsString, IsNotEmpty, IsNumber, IsEmail, IsNotEmptyObject, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, IsNotEmpty, IsNumber, IsEmail, IsNotEmptyObject, ValidateNested, IsNumberString } from 'class-validator';
 import { RoleDTO } from './role.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -62,7 +62,7 @@ export class UserDTO {
   })
   @Expose()
   @IsNotEmpty()
-  @IsString()
+  @IsNumberString()
   private dni: string;
 
   @ApiProperty({
