@@ -1,24 +1,24 @@
 import { Controller, Logger, Post, UseFilters, UseGuards, Headers, HttpCode, HttpStatus, Body, Patch, Param, Get, Query } from '@nestjs/common';
-import { ServiceTypeService } from './service-type.service';
+import { SeatTypeService } from './seat-type.service';
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
-import { ServiceTypeDTO } from './dtos/service-type.dto';
-import { UpdateServiceTypeDTO } from './dtos/update-service-type.dto';
-@ApiTags('ServiceType')
-@Controller('serviceType')
+import { SeatTypeDTO } from './dtos/seat-type.dto';
+import { UpdateSeatTypeDTO } from './dtos/update-service-type.dto';
+@ApiTags('SeatType')
+@Controller('seatType')
 @UseGuards(AuthGuard)
 @UseFilters(HttpExceptionFilter)
-export class ServiceTypeController {
-  private logger = new Logger(ServiceTypeController.name);
-  constructor(private service: ServiceTypeService, private utilsService: UtilsService) {}
+export class SeatTypeController {
+  private logger = new Logger(SeatTypeController.name);
+  constructor(private service: SeatTypeService, private utilsService: UtilsService) {}
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Create a new Service Type' })
+  @ApiOperation({ summary: 'Create a new Seat Type' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
-    description: 'The service type has been successfully created.'
+    description: 'The Seat type has been successfully created.'
   })
   @ApiHeader({
     name: 'unique-trace-id',
@@ -27,7 +27,7 @@ export class ServiceTypeController {
   })
   @ApiHeader({
     name: 'user_role',
-    description: 'User role allowed to create a new Service Type',
+    description: 'User role allowed to create a new Seat Type',
     required: true
   })
   @ApiHeader({
@@ -36,13 +36,13 @@ export class ServiceTypeController {
     required: true
   })
   @Post('/')
-  async create(@Body() dto: ServiceTypeDTO, @Headers('unique-trace-id') uniqueTraceId: string) {
+  async create(@Body() dto: SeatTypeDTO, @Headers('unique-trace-id') uniqueTraceId: string) {
     try {
       await this.service.create(dto);
     } catch (error) {
       this.logger.log({
         level: 'error',
-        message: 'An Error occurred while trying to Create a new Service Type ',
+        message: 'An Error occurred while trying to Create a new Seat Type ',
         method: this.create.name,
         err: error,
         'unique-trace-id': uniqueTraceId
@@ -51,11 +51,11 @@ export class ServiceTypeController {
     }
   }
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Update a Service Type' })
+  @ApiOperation({ summary: 'Update a Seat Type' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
-    description: 'The service type has been successfully updated.'
+    description: 'The Seat type has been successfully updated.'
   })
   @ApiHeader({
     name: 'unique-trace-id',
@@ -64,7 +64,7 @@ export class ServiceTypeController {
   })
   @ApiHeader({
     name: 'user_role',
-    description: 'User role allowed to update a Service Type',
+    description: 'User role allowed to update a Seat Type',
     required: true
   })
   @ApiHeader({
@@ -74,17 +74,17 @@ export class ServiceTypeController {
   })
   @ApiParam({
     name: 'id',
-    description: 'Service Type id to be updated',
+    description: 'Seat Type id to be updated',
     required: true
   })
   @Patch('/:id')
-  async update(@Body() dto: UpdateServiceTypeDTO, @Headers('unique-trace-id') uniqueTraceId: string, @Param('id') id: number) {
+  async update(@Body() dto: UpdateSeatTypeDTO, @Headers('unique-trace-id') uniqueTraceId: string, @Param('id') id: number) {
     try {
       await this.service.update(id, dto);
     } catch (error) {
       this.logger.log({
         level: 'error',
-        message: 'An Error occurred while trying to Update a new Service Type ',
+        message: 'An Error occurred while trying to Update a new Seat Type ',
         method: this.update.name,
         err: error,
         'unique-trace-id': uniqueTraceId
@@ -93,11 +93,11 @@ export class ServiceTypeController {
     }
   }
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Find All Services Types ' })
+  @ApiOperation({ summary: 'Find All Seat Types ' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The service types have been found successfully.'
+    description: 'The Seat types have been found successfully.'
   })
   @ApiHeader({
     name: 'unique-trace-id',
@@ -106,7 +106,7 @@ export class ServiceTypeController {
   })
   @ApiHeader({
     name: 'user_role',
-    description: 'User role allowed to update a Service Type',
+    description: 'User role allowed to update a Seat Type',
     required: true
   })
   @ApiHeader({
@@ -121,7 +121,7 @@ export class ServiceTypeController {
     } catch (error) {
       this.logger.log({
         level: 'error',
-        message: 'An Error occurred while trying to Get Service Types ',
+        message: 'An Error occurred while trying to Get Seat Types ',
         method: this.get.name,
         err: error,
         'unique-trace-id': uniqueTraceId

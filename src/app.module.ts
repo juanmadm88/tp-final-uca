@@ -12,6 +12,7 @@ import { VerifyRoleMiddleware } from './middlewares/verify-role.middleware';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GenerateTraceIdInterceptor } from './interceptor/generate-trace-id.interceptor';
 import { ServiceTypeModule } from './service-type/service-type.module';
+import { SeatTypeModule } from './seat-type/seat-type.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { ServiceTypeModule } from './service-type/service-type.module';
     UtilsModule,
     UserModule,
     AuthModule,
-    ServiceTypeModule
+    ServiceTypeModule,
+    SeatTypeModule
   ],
   controllers: [AppController],
   providers: [
