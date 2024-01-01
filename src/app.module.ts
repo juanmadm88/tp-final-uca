@@ -19,6 +19,8 @@ import { BrandController } from './brand/brand.controller';
 import { BrandModule } from './brand/brand.module';
 import { ModelModule } from './model/model.module';
 import { ModelController } from './model/model.controller';
+import { TerminalController } from './terminal/terminal.controller';
+import { TerminalModule } from './terminal/terminal.module';
 
 @Module({
   imports: [
@@ -47,7 +49,8 @@ import { ModelController } from './model/model.controller';
     ServiceTypeModule,
     SeatTypeModule,
     BrandModule,
-    ModelModule
+    ModelModule,
+    TerminalModule
   ],
   controllers: [AppController],
   providers: [
@@ -60,6 +63,6 @@ import { ModelController } from './model/model.controller';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController, BrandController, ModelController);
+    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController, BrandController, ModelController, TerminalController);
   }
 }

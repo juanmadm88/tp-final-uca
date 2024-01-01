@@ -1,23 +1,23 @@
 import { Controller, Logger, Post, UseFilters, UseGuards, Headers, HttpCode, HttpStatus, Body, Get, Query } from '@nestjs/common';
-import { ModelService } from './model.service';
+import { TerminalService } from './terminal.service';
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
-import { ModelDTO } from './dtos/model.dto';
-@ApiTags('Model')
-@Controller('model')
+import { TerminalDTO } from './dtos/terminal.dto';
+@ApiTags('Terminal')
+@Controller('terminal')
 @UseGuards(AuthGuard)
 @UseFilters(HttpExceptionFilter)
-export class ModelController {
-  private logger = new Logger(ModelController.name);
-  constructor(private service: ModelService, private utilsService: UtilsService) {}
+export class TerminalController {
+  private logger = new Logger(TerminalController.name);
+  constructor(private service: TerminalService, private utilsService: UtilsService) {}
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Create a new Model' })
+  @ApiOperation({ summary: 'Create a new Terminal' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
-    description: 'The Model has been successfully created.'
+    description: 'The Terminal has been successfully created.'
   })
   @ApiHeader({
     name: 'unique-trace-id',
@@ -26,7 +26,7 @@ export class ModelController {
   })
   @ApiHeader({
     name: 'user_role',
-    description: 'User role allowed to create a new Model ',
+    description: 'User role allowed to create a new Terminal ',
     required: true
   })
   @ApiHeader({
@@ -35,13 +35,13 @@ export class ModelController {
     required: true
   })
   @Post('/')
-  async create(@Body() dto: ModelDTO, @Headers('unique-trace-id') uniqueTraceId: string) {
+  async create(@Body() dto: TerminalDTO, @Headers('unique-trace-id') uniqueTraceId: string) {
     try {
       await this.service.create(dto);
     } catch (error) {
       this.logger.log({
         level: 'error',
-        message: 'An Error occurred while trying to Create a new Model ',
+        message: 'An Error occurred while trying to Create a new Terminal ',
         method: this.create.name,
         err: error,
         'unique-trace-id': uniqueTraceId
@@ -50,11 +50,11 @@ export class ModelController {
     }
   }
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Find All Models ' })
+  @ApiOperation({ summary: 'Find All Terminals ' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The Model has been found successfully.'
+    description: 'The Terminal has been found successfully.'
   })
   @ApiHeader({
     name: 'unique-trace-id',
@@ -63,7 +63,7 @@ export class ModelController {
   })
   @ApiHeader({
     name: 'user_role',
-    description: 'User role allowed to update a Model',
+    description: 'User role allowed to update a Terminal',
     required: true
   })
   @ApiHeader({
@@ -78,7 +78,7 @@ export class ModelController {
     } catch (error) {
       this.logger.log({
         level: 'error',
-        message: 'An Error occurred while trying to Get Model ',
+        message: 'An Error occurred while trying to Get Terminal ',
         method: this.get.name,
         err: error,
         'unique-trace-id': uniqueTraceId

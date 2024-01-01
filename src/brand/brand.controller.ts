@@ -13,7 +13,7 @@ export class BrandController {
   private logger = new Logger(BrandController.name);
   constructor(private service: BrandService, private utilsService: UtilsService) {}
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Create a new Seat Type' })
+  @ApiOperation({ summary: 'Create a new Brand' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
