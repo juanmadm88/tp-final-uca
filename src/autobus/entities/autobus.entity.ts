@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Seat } from './seat.entity';
-import { Model } from 'src/model/entities/model.entity';
-import { Brand } from 'src/brand/entities/brand.entity';
+import { Model } from '../../model/entities/model.entity';
+import { Brand } from '../../brand/entities/brand.entity';
 
 @Entity('autobuses')
 export class Autobus {
