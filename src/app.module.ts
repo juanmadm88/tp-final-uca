@@ -21,6 +21,8 @@ import { ModelModule } from './model/model.module';
 import { ModelController } from './model/model.controller';
 import { TerminalController } from './terminal/terminal.controller';
 import { TerminalModule } from './terminal/terminal.module';
+import { AutobusModule } from './autobus/autobus.module';
+import { AutobusController } from './autobus/autobus.controller';
 
 @Module({
   imports: [
@@ -39,7 +41,8 @@ import { TerminalModule } from './terminal/terminal.module';
         password: configService.get<string>('appConfig.msyqlConnection.password'),
         database: configService.get<string>('appConfig.msyqlConnection.database'),
         synchronize: configService.get<boolean>('appConfig.msyqlConnection.synchronize'),
-        autoLoadEntities: true
+        autoLoadEntities: true,
+        logging: configService.get<boolean>('appConfig.msyqlConnection.allowLoggingQueries')
       }),
       inject: [ConfigService]
     }),
@@ -50,7 +53,8 @@ import { TerminalModule } from './terminal/terminal.module';
     SeatTypeModule,
     BrandModule,
     ModelModule,
-    TerminalModule
+    TerminalModule,
+    AutobusModule
   ],
   controllers: [AppController],
   providers: [
@@ -63,6 +67,6 @@ import { TerminalModule } from './terminal/terminal.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController, BrandController, ModelController, TerminalController);
+    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController, BrandController, ModelController, TerminalController, AutobusController);
   }
 }

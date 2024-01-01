@@ -12,11 +12,12 @@ const baseConfig = {
     username: process.env.DB_USERNAME || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_SCHEMA || 'transport',
-    synchronize: !!process.env.DB_SYNCHRONIZE
+    synchronize: !!process.env.DB_SYNCHRONIZE,
+    allowLoggingQueries: process.env.DB_ALLOW_LOGGING || true
   },
   token: {
     secret: process.env.TOKEN_SECRET || 'thisIsAkeyforUcaFinalTp$',
-    expiration: process.env.TOKEN_EXPIRATION || '600s'
+    expiration: process.env.TOKEN_EXPIRATION || '10h'
   },
   salt: parseInt(process.env.ENCRIPTATION_SALT || '10', 10)
 };
