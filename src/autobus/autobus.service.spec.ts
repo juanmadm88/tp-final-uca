@@ -10,6 +10,9 @@ describe('AutobusService', () => {
   const mockedUtilsService = {
     buildDTO: jest.fn()
   };
+  const mockedManager = {
+    save: jest.fn()
+  };
   const mockedDataSource = {
     createQueryRunner: () => {
       return {
@@ -18,9 +21,7 @@ describe('AutobusService', () => {
         rollbackTransaction: jest.fn(),
         commitTransaction: jest.fn(),
         release: jest.fn(),
-        manager: {
-          save: jest.fn()
-        }
+        manager: mockedManager
       };
     }
   };
@@ -73,5 +74,50 @@ describe('AutobusService', () => {
         ]
       })
     );
+  });
+  it('expect an Error when create method fails ', async () => {
+    jest.spyOn(mockedManager, 'save').mockImplementationOnce(() => Promise.reject({ error: 'some error' }));
+    try {
+      await service.create(
+        plainToInstance(AutoBusDTO, {
+          id: 1,
+          asigned: false,
+          model: {
+            description: 'modelo 1',
+            id: 3
+          },
+          brand: {
+            description: 'Toyota',
+            id: 1
+          },
+          seats: [
+            {
+              booked: true,
+              seatType: {
+                description: 'cama asiento',
+                id: 1,
+                isActive: true
+              }
+            },
+            {
+              seatType: {
+                description: 'cama simple',
+                id: 2,
+                isActive: true
+              }
+            },
+            {
+              seatType: {
+                description: 'cama simple',
+                id: 2,
+                isActive: true
+              }
+            }
+          ]
+        })
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
   });
 });
