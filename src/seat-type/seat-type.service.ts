@@ -22,7 +22,7 @@ export class SeatTypeService {
   private buildSeatTypeEntity(dto: any): SeatType {
     const entity: SeatType = new SeatType();
     if (dto.getDescription()) entity.description = dto.getDescription();
-    if ('isActive' in dto) entity.isActive = dto.getIsActive();
+    if ('isActive' in dto && dto.getIsActive() != undefined) entity.isActive = dto.getIsActive();
     return entity;
   }
   async create(dto: SeatTypeDTO): Promise<any> {

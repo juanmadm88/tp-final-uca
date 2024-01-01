@@ -32,7 +32,7 @@ export class AutobusService {
     const model: Model = new Model();
     const brand: Brand = new Brand();
     if (dto.getId()) autobus.id = dto.getId();
-    if ('asigned' in dto && dto.getAsigned()) autobus.asigned = dto.getAsigned();
+    if ('asigned' in dto && dto.getAsigned() != undefined) autobus.asigned = dto.getAsigned();
     model.id = dto.getModel().getId();
     model.description = dto.getModel().getDescription();
     autobus.model = model;
@@ -44,10 +44,10 @@ export class AutobusService {
       const seatType: SeatType = new SeatType();
       seatType.id = dto.getId();
       seatType.description = dto.getDescription();
-      if ('isActive' in dto && dto.getIsActive()) seatType.isActive = dto.getIsActive();
+      if ('isActive' in dto && dto.getIsActive() != undefined) seatType.isActive = dto.getIsActive();
       const seat: Seat = new Seat();
       seat.seatType = seatType;
-      if ('booked' in dto && seatDTO.getBooked()) seatType.isActive = seatDTO.getBooked();
+      if ('booked' in seatDTO && seatDTO.getBooked() != undefined) seatType.isActive = seatDTO.getBooked();
       return seat;
     });
     autobus.seats = seatArray;

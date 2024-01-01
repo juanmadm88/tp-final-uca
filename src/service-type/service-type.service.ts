@@ -22,7 +22,7 @@ export class ServiceTypeService {
   private buildServiceTypeEntity(dto: any): ServiceType {
     const entity: ServiceType = new ServiceType();
     if (dto.getDescription()) entity.description = dto.getDescription();
-    if ('isActive' in dto) entity.isActive = dto.getIsActive();
+    if ('isActive' in dto && dto.getIsActive() != undefined) entity.isActive = dto.getIsActive();
     return entity;
   }
   async create(dto: ServiceTypeDTO): Promise<any> {
