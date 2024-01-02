@@ -13,7 +13,8 @@ describe('AutobusService', () => {
   };
   const mockedManager = {
     save: jest.fn(),
-    update: jest.fn()
+    update: jest.fn(),
+    find: jest.fn()
   };
   const mockedDataSource = {
     createQueryRunner: () => {
@@ -154,5 +155,103 @@ describe('AutobusService', () => {
     } catch (error) {
       expect(error).toBeDefined();
     }
+  });
+  it('expect an Array of Autobuses when find method is called ', async () => {
+    const result: Array<any> = [
+      {
+        model: {
+          description: 'modelo 1',
+          id: 3
+        },
+        brand: {
+          description: 'Toyota',
+          id: 1
+        },
+        asigned: false,
+        id: 11,
+        seats: [
+          {
+            seatType: {
+              description: 'cama asiento',
+              id: 1,
+              isActive: true
+            },
+            id: 22,
+            booked: false
+          },
+          {
+            seatType: {
+              description: 'cama simple',
+              id: 2,
+              isActive: true
+            },
+            id: 23,
+            booked: false
+          },
+          {
+            seatType: {
+              description: 'cama simple',
+              id: 2,
+              isActive: true
+            },
+            id: 24,
+            booked: false
+          }
+        ]
+      }
+    ];
+    const dto: Array<AutoBusDTO> = plainToInstance(AutoBusDTO, result);
+    jest.spyOn(mockedManager, 'find').mockImplementationOnce(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
+    const response = await service.findAll({ skip: 2, take: 1 });
+    expect(response).toBeDefined();
+  });
+  it('expect an Array of Autobuses when find method is called ', async () => {
+    const result = {
+      model: {
+        description: 'modelo 1',
+        id: 3
+      },
+      brand: {
+        description: 'Toyota',
+        id: 1
+      },
+      asigned: false,
+      id: 11,
+      seats: [
+        {
+          seatType: {
+            description: 'cama asiento',
+            id: 1,
+            isActive: true
+          },
+          id: 22,
+          booked: false
+        },
+        {
+          seatType: {
+            description: 'cama simple',
+            id: 2,
+            isActive: true
+          },
+          id: 23,
+          booked: false
+        },
+        {
+          seatType: {
+            description: 'cama simple',
+            id: 2,
+            isActive: true
+          },
+          id: 24,
+          booked: false
+        }
+      ]
+    };
+    const dto: AutoBusDTO = plainToInstance(AutoBusDTO, result);
+    jest.spyOn(mockedManager, 'find').mockImplementationOnce(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
+    const response = await service.findById(1);
+    expect(response).toBeDefined();
   });
 });
