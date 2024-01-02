@@ -11,7 +11,9 @@ describe('AutobusController', () => {
   let controller: AutobusController;
   const mockedService = {
     create: jest.fn(),
-    update: jest.fn()
+    update: jest.fn(),
+    findById: jest.fn(),
+    findAll: jest.fn()
   };
   const mockedAuthGuard = {
     canActivate: jest.fn()
@@ -118,6 +120,22 @@ describe('AutobusController', () => {
     });
     try {
       await controller.update(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 1);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect an Error when findById service method fails', async () => {
+    jest.spyOn(mockedService, 'findById').mockImplementation(() => Promise.reject({ status: 404 }));
+    try {
+      await controller.getById('9568be23-16c6-4d87-8dd0-614b34a6c830', 1);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect an Error when findById service method fails', async () => {
+    jest.spyOn(mockedService, 'findAll').mockImplementation(() => Promise.reject({ status: 404 }));
+    try {
+      await controller.get('9568be23-16c6-4d87-8dd0-614b34a6c830', 1);
     } catch (error) {
       expect(error).toBeDefined();
     }
