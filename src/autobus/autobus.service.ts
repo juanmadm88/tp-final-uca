@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
 import { AutoBusDTO } from './dtos/autobus.dto';
-import { DataSource } from 'typeorm';
+import { DataSource, FindManyOptions } from 'typeorm';
 import { Autobus } from './entities/autobus.entity';
 import { Model } from '../model/entities/model.entity';
 import { Brand } from '../brand/entities/brand.entity';
@@ -79,5 +79,17 @@ export class AutobusService {
     } finally {
       await queryRunner.release();
     }
+  }
+  async findAll(paginationOptions: FindManyOptions = {}): Promise<Array<AutoBusDTO>> {
+    const pagination: any = {};
+    if (paginationOptions.skip) pagination.skip = paginationOptions.skip;
+    if (paginationOptions.take) pagination.take = paginationOptions.take;
+    const queryRunner = this.dataSource.createQueryRunner();
+    return this.utils.buildDTO(await queryRunner.manager.find(Autobus, { ...pagination }), AutoBusDTO);
+  }
+
+  async findById(id: number): Promise<Array<AutoBusDTO>> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    return this.utils.buildDTO(await queryRunner.manager.find(Autobus, { where: { id }, relations: ['seats'] }), AutoBusDTO);
   }
 }
