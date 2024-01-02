@@ -1,6 +1,6 @@
 import { Controller, Logger, Post, UseFilters, UseGuards, Headers, HttpCode, HttpStatus, Body, Patch, Param, Get, Query } from '@nestjs/common';
 import { ServiceTypeService } from './service-type.service';
-import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
@@ -113,6 +113,18 @@ export class ServiceTypeController {
     name: 'Authorization',
     description: 'Bearer Token',
     required: true
+  })
+  @ApiQuery({
+    name: 'skip',
+    type: 'number',
+    required: false,
+    description: 'Number or Service Types to be skipped '
+  })
+  @ApiQuery({
+    name: 'size',
+    type: 'string',
+    required: false,
+    description: 'Number of Service Types to be returned '
   })
   @Get('/')
   async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query('skip') skip?: number, @Query('size') size?: number) {
