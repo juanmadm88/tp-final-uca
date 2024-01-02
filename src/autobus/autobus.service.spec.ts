@@ -4,6 +4,7 @@ import { UtilsService } from '../utils/utils.service';
 import { plainToInstance } from 'class-transformer';
 import { AutoBusDTO } from './dtos/autobus.dto';
 import { DataSource } from 'typeorm';
+import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';
 
 describe('AutobusService', () => {
   let service: AutobusService;
@@ -11,7 +12,8 @@ describe('AutobusService', () => {
     buildDTO: jest.fn()
   };
   const mockedManager = {
-    save: jest.fn()
+    save: jest.fn(),
+    update: jest.fn()
   };
   const mockedDataSource = {
     createQueryRunner: () => {
@@ -112,6 +114,39 @@ describe('AutobusService', () => {
                 id: 2,
                 isActive: true
               }
+            }
+          ]
+        })
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect update method executed successfully ', async () => {
+    await service.update(
+      1,
+      plainToInstance(UpdateAutoBusDTO, {
+        asigned: false,
+        seats: [
+          {
+            id: 1,
+            booked: true
+          }
+        ]
+      })
+    );
+  });
+  it('expect an Error when update method fails ', async () => {
+    jest.spyOn(mockedManager, 'update').mockImplementationOnce(() => Promise.reject({ error: 'some error' }));
+    try {
+      await service.update(
+        1,
+        plainToInstance(UpdateAutoBusDTO, {
+          asigned: false,
+          seats: [
+            {
+              id: 1,
+              booked: true
             }
           ]
         })

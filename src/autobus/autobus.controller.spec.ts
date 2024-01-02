@@ -6,10 +6,12 @@ import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { AutoBusDTO } from './dtos/autobus.dto';
 import { plainToInstance } from 'class-transformer';
+import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';
 describe('AutobusController', () => {
   let controller: AutobusController;
   const mockedService = {
-    create: jest.fn()
+    create: jest.fn(),
+    update: jest.fn()
   };
   const mockedAuthGuard = {
     canActivate: jest.fn()
@@ -105,6 +107,17 @@ describe('AutobusController', () => {
     });
     try {
       await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect an Error when update method fails', async () => {
+    jest.spyOn(mockedService, 'update').mockImplementation(() => Promise.reject({ status: 404 }));
+    const dto: UpdateAutoBusDTO = plainToInstance(UpdateAutoBusDTO, {
+      asigned: true
+    });
+    try {
+      await controller.update(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 1);
     } catch (error) {
       expect(error).toBeDefined();
     }
