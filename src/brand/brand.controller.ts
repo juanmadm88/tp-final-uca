@@ -62,11 +62,6 @@ export class BrandController {
     required: false
   })
   @ApiHeader({
-    name: 'user_role',
-    description: 'User role allowed to update a Brand',
-    required: true
-  })
-  @ApiHeader({
     name: 'Authorization',
     description: 'Bearer Token',
     required: true

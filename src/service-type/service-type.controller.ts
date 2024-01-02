@@ -105,11 +105,6 @@ export class ServiceTypeController {
     required: false
   })
   @ApiHeader({
-    name: 'user_role',
-    description: 'User role allowed to update a Service Type',
-    required: true
-  })
-  @ApiHeader({
     name: 'Authorization',
     description: 'Bearer Token',
     required: true
@@ -118,7 +113,7 @@ export class ServiceTypeController {
     name: 'skip',
     type: 'number',
     required: false,
-    description: 'Number or Service Types to be skipped '
+    description: 'Number of Service Types to be skipped '
   })
   @ApiQuery({
     name: 'size',

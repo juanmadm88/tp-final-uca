@@ -105,11 +105,6 @@ export class SeatTypeController {
     required: false
   })
   @ApiHeader({
-    name: 'user_role',
-    description: 'User role allowed to update a Seat Type',
-    required: true
-  })
-  @ApiHeader({
     name: 'Authorization',
     description: 'Bearer Token',
     required: true
