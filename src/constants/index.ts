@@ -5,7 +5,8 @@ export class Constants {
   public static readonly WHERE_CLAUSES: any = {
     trip: {
       originDescription: 'origin.description like :originDescription',
-      destinationDescription: ' destination.description like :destinationDescription'
+      destinationDescription: ' destination.description like :destinationDescription',
+      departureDate: 'trip.departureDate like :departureDate'
     }
   };
 }

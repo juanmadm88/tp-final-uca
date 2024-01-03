@@ -3,4 +3,5 @@ export interface QueryParams {
   size?: number;
   destinationDescription?: string;
   originDescription?: string;
+  departureDate?: string;
 }

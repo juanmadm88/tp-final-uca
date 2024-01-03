@@ -171,6 +171,7 @@ export class TripController {
     if (args.size) result.take = args.size;
     if (args.originDescription) where = { originDescription: `%${args.originDescription}%` };
     if (args.destinationDescription) where = { ...where, destinationDescription: `%${args.destinationDescription}%` };
+    if (args.departureDate) where = { ...where, departureDate: `%${args.departureDate}%` };
     if (Object.keys(where).length > 0) result.where = where;
     return result;
   }
