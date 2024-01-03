@@ -23,6 +23,8 @@ import { TerminalController } from './terminal/terminal.controller';
 import { TerminalModule } from './terminal/terminal.module';
 import { AutobusModule } from './autobus/autobus.module';
 import { AutobusController } from './autobus/autobus.controller';
+import { TripModule } from './trip/trip.module';
+import { TripController } from './trip/trip.controller';
 
 @Module({
   imports: [
@@ -54,7 +56,8 @@ import { AutobusController } from './autobus/autobus.controller';
     BrandModule,
     ModelModule,
     TerminalModule,
-    AutobusModule
+    AutobusModule,
+    TripModule
   ],
   controllers: [AppController],
   providers: [
@@ -67,6 +70,6 @@ import { AutobusController } from './autobus/autobus.controller';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController, BrandController, ModelController, TerminalController, AutobusController);
+    consumer.apply(VerifyRoleMiddleware).forRoutes(ServiceTypeController, SeatTypeController, BrandController, ModelController, TerminalController, AutobusController, TripController);
   }
 }
