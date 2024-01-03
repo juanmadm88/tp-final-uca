@@ -88,8 +88,8 @@ export class AutobusService {
     return this.utils.buildDTO(await queryRunner.manager.find(Autobus, { ...pagination }), AutoBusDTO);
   }
 
-  async findById(id: number): Promise<Array<AutoBusDTO>> {
+  async findById(id: number): Promise<AutoBusDTO> {
     const queryRunner = this.dataSource.createQueryRunner();
-    return this.utils.buildDTO(await queryRunner.manager.find(Autobus, { where: { id }, relations: ['seats'] }), AutoBusDTO);
+    return this.utils.buildDTO(await queryRunner.manager.findOne(Autobus, { where: { id }, relations: ['seats'] }), AutoBusDTO);
   }
 }

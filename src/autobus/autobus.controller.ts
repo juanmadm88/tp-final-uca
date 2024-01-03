@@ -14,7 +14,7 @@ export class AutobusController {
   private logger = new Logger(HttpExceptionFilter.name);
   constructor(private service: AutobusService, private utilsService: UtilsService) {}
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Create a new Autobus Type' })
+  @ApiOperation({ summary: 'Create a new Autobus ' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
@@ -93,7 +93,7 @@ export class AutobusController {
     }
   }
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Find All Services Types ' })
+  @ApiOperation({ summary: 'Find All Autobuses ' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.OK,
@@ -137,11 +137,11 @@ export class AutobusController {
     }
   }
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Find All Services Types ' })
+  @ApiOperation({ summary: 'Find An Autobus by Id ' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'The Autobuses have been found successfully.'
+    description: 'The Autobus has been found successfully.'
   })
   @ApiHeader({
     name: 'unique-trace-id',

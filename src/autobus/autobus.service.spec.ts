@@ -14,7 +14,8 @@ describe('AutobusService', () => {
   const mockedManager = {
     save: jest.fn(),
     update: jest.fn(),
-    find: jest.fn()
+    find: jest.fn(),
+    findOne: jest.fn()
   };
   const mockedDataSource = {
     createQueryRunner: () => {
@@ -249,7 +250,7 @@ describe('AutobusService', () => {
       ]
     };
     const dto: AutoBusDTO = plainToInstance(AutoBusDTO, result);
-    jest.spyOn(mockedManager, 'find').mockImplementationOnce(() => Promise.resolve(result));
+    jest.spyOn(mockedManager, 'findOne').mockImplementationOnce(() => Promise.resolve(result));
     mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
     const response = await service.findById(1);
     expect(response).toBeDefined();
