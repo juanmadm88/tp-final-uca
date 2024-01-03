@@ -194,7 +194,7 @@ export class TripController {
       this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
     }
   }
-  private buildOptions(args: QueryParams): FindManyOptions {
+  private buildOptions(args: QueryParams = {}): FindManyOptions {
     const result: FindManyOptions = {};
     let where: any = {};
     if (args.skip) result.skip = args.skip;
