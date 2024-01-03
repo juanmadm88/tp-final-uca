@@ -1,6 +1,6 @@
 import { Controller, Logger, Post, UseFilters, UseGuards, Headers, HttpCode, HttpStatus, Body, Param, Get, Patch, Query } from '@nestjs/common';
 import { TripService } from './trip.service';
-import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
@@ -105,6 +105,36 @@ export class TripController {
     name: 'Authorization',
     description: 'Bearer Token',
     required: true
+  })
+  @ApiQuery({
+    name: 'skip',
+    type: 'number',
+    required: false,
+    description: 'Number of Trips to be skipped '
+  })
+  @ApiQuery({
+    name: 'size',
+    type: 'number',
+    required: false,
+    description: 'Number of Trips to be returned '
+  })
+  @ApiQuery({
+    name: 'destinationDescription',
+    type: 'string',
+    required: false,
+    description: 'Destination description of the Trip '
+  })
+  @ApiQuery({
+    name: 'originDescription',
+    type: 'string',
+    required: false,
+    description: 'Origin description of the Trip '
+  })
+  @ApiQuery({
+    name: 'departureDate',
+    type: 'string',
+    required: false,
+    description: 'Departure date of the Trip '
   })
   @Get('/')
   async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params: QueryParams) {
