@@ -6,6 +6,7 @@ import { TripDTO } from './dtos/trip.dto';
 import { DataSource } from 'typeorm';
 import { UpdateTripDTO } from './dtos/update-trip.dto';
 import { AutoBusDTO } from '../autobus/dtos/autobus.dto';
+import { BadRequestException } from '@nestjs/common';
 
 describe('TripService', () => {
   let service: TripService;
@@ -64,6 +65,7 @@ describe('TripService', () => {
     }
   };
   beforeEach(async () => {
+    jest.resetAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
     }).compile();
@@ -73,6 +75,39 @@ describe('TripService', () => {
     expect(service).toBeDefined();
   });
   it('expect create method executed successfully ', async () => {
+    const mockedDataSource = {
+      createQueryRunner: () => {
+        return {
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          release: jest.fn(),
+          manager: mockedManager
+        };
+      },
+      getRepository: () => {
+        return {
+          createQueryBuilder: () => {
+            return {
+              innerJoinAndSelect: () => {
+                return {
+                  where: () => {
+                    return {
+                      getOne: jest.fn()
+                    };
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+    }).compile();
+    service = module.get<TripService>(TripService);
     await service.create(
       plainToInstance(TripDTO, {
         departureDate: '2020-07-10T03:00:00.000Z',
@@ -155,5 +190,66 @@ describe('TripService', () => {
     });
     jest.spyOn(mockedUtilsService, 'buildDTO').mockImplementation(() => autobus);
     await service.update(1, plainToInstance(UpdateTripDTO, { autobus: { id: 1 }, finished: true }));
+  });
+  it('expect create method return a Bad Request Error when autobus is asigned to another trip', async () => {
+    const mockedDataSource = {
+      createQueryRunner: () => {
+        return {
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          release: jest.fn(),
+          manager: mockedManager
+        };
+      },
+      getRepository: () => {
+        return {
+          createQueryBuilder: () => {
+            return {
+              innerJoinAndSelect: () => {
+                return {
+                  where: () => {
+                    return {
+                      getOne: jest.fn().mockImplementationOnce(() => Promise.resolve({ data: 'ok' }))
+                    };
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+    }).compile();
+    service = module.get<TripService>(TripService);
+    try {
+      await service.create(
+        plainToInstance(TripDTO, {
+          departureDate: '2020-07-10T03:00:00.000Z',
+          arrivalDate: '2020-07-11T03:00:00.000Z',
+          origin: {
+            description: 'mar de ajo',
+            id: 1,
+            kilometer: 350
+          },
+          destination: {
+            description: 'mar de ajo',
+            id: 1,
+            kilometer: 350
+          },
+          id: 1,
+          autobus: {
+            id: 1
+          },
+          finished: true
+        })
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error).toBeInstanceOf(BadRequestException);
+    }
   });
 });

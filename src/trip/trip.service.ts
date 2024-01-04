@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
 import { TripDTO } from './dtos/trip.dto';
 import { DataSource, FindManyOptions } from 'typeorm';
@@ -18,8 +18,10 @@ export class TripService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      await queryRunner.manager.save(this.buildTripEntity(dto));
       const id: number = dto.getAutobus().getId();
+      const tripDB: Trip = await this.dataSource.getRepository(Trip).createQueryBuilder('trip').innerJoinAndSelect('trip.autobus', 'autobus').where('trip.autobus.id = :id', { id }).getOne();
+      if (tripDB) throw new BadRequestException(Constants.AUTOBUS_ALREADY_ASIGNED);
+      await queryRunner.manager.save(this.buildTripEntity(dto));
       await queryRunner.manager.update(Autobus, id, { asigned: true });
       await queryRunner.commitTransaction();
     } catch (error) {
