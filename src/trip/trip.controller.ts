@@ -13,7 +13,7 @@ import { FindManyOptions } from 'typeorm';
 @UseGuards(AuthGuard)
 @UseFilters(HttpExceptionFilter)
 export class TripController {
-  private logger = new Logger(HttpExceptionFilter.name);
+  private logger = new Logger(TripController.name);
   constructor(private service: TripService, private utilsService: UtilsService) {}
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Create a new Trip' })

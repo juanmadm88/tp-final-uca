@@ -11,7 +11,7 @@ import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';
 @UseGuards(AuthGuard)
 @UseFilters(HttpExceptionFilter)
 export class AutobusController {
-  private logger = new Logger(HttpExceptionFilter.name);
+  private logger = new Logger(AutobusController.name);
   constructor(private service: AutobusService, private utilsService: UtilsService) {}
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Create a new Autobus ' })
