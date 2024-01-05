@@ -9,25 +9,32 @@ import { Trip } from '../trip/entities/trip.entity';
 import { CreateSeatDTO } from './dtos/create-seat.dto';
 import { Seat } from '../autobus/entities/seat.entity';
 import { Constants } from '../constants';
+import { SeatType } from '../seat-type/entities/seat-type.entity';
+import { ConfigService } from '@nestjs/config';
 
-//TODO: HAY QUE AGREGAR LA LOGICA PARA CALCULAR EL PRECIO DEL TICKET
 @Injectable()
 export class TicketService {
-  constructor(private utils: UtilsService, private dataSource: DataSource) {}
+  constructor(private utils: UtilsService, private dataSource: DataSource, private configService: ConfigService) {}
   async create(dto: TicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      const seatTypes: Array<SeatType> = [];
       const seats: Array<CreateSeatDTO> = dto.getSeats();
       const ids: Array<number> = seats.map((seat: CreateSeatDTO) => {
         return seat.getId();
       });
-      const seatsDB: Array<Seat> = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id IN (:...ids)', { ids }).getMany();
-      seatsDB.forEach((seat: Seat) => {
+      const seatsDB: Array<Seat> = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id IN (:...ids)', { ids }).innerJoinAndSelect('seat.seatType', 'seatType').getMany();
+      const serviceTypeDB: ServiceType = await this.dataSource.getRepository(ServiceType).createQueryBuilder('type').where('type.id = :id', { id: dto.getServiceType().getId() }).getOne();
+      for (const seat of seatsDB) {
+        seatTypes.push(seat.seatType);
         if (seat.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
-      });
-      await queryRunner.manager.save(this.buildTicketEntity(dto));
+        await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: true });
+      }
+      const trip: Trip = await this.dataSource.getRepository(Trip).createQueryBuilder('trip').innerJoinAndSelect('trip.destination', 'destination').innerJoinAndSelect('trip.origin', 'origin').where('trip.id = :id', { id: dto.getTrip().getId() }).getOne();
+      const kilometers: number = trip.destination.kilometer - trip.origin.kilometer;
+      await queryRunner.manager.save(this.buildTicketEntity(dto, this.buildPrice({ serviceType: serviceTypeDB, kilometers, seatTypes })));
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -36,9 +43,9 @@ export class TicketService {
       await queryRunner.release();
     }
   }
-  private buildTicketEntity(dto: TicketDTO): Ticket {
+  private buildTicketEntity(dto: TicketDTO, price: number): Ticket {
     const ticket: Ticket = new Ticket();
-    ticket.price = dto.getPrice();
+    ticket.price = price;
     ticket.serviceType = new ServiceType();
     ticket.serviceType.id = dto.getServiceType().getId();
     ticket.user = new User();
@@ -52,5 +59,16 @@ export class TicketService {
       return seat;
     });
     return ticket;
+  }
+  private buildPrice(args: any): number {
+    const { serviceType, kilometers, seatTypes } = args;
+    const costs: any = this.configService.get<object>('appConfig.pricesConfig');
+    const { fuelCostPerKm, seatTypeCost, serviceTypeCost } = costs;
+    let seatCosts: any = 0;
+    seatTypes.forEach((element: any) => {
+      seatCosts += seatTypeCost[element.description];
+    });
+    const price: number = fuelCostPerKm * kilometers + serviceTypeCost[serviceType.description.toLowerCase()] + seatCosts;
+    return price;
   }
 }

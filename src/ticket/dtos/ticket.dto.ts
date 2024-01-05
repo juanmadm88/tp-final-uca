@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, IsNumber, IsNotEmptyObject, ValidateNested, IsArray, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsNumber, IsNotEmptyObject, ValidateNested, IsArray } from 'class-validator';
 import { CreateUserDTO } from './create-user.dto';
 import { CreateTripDTO } from './create-trip.dto';
 import { CreateSeatDTO } from './create-seat.dto';
@@ -47,13 +47,13 @@ export class TicketDTO {
   @ApiProperty({
     name: 'price',
     type: 'decimal',
-    required: true,
+    required: false,
     description: 'The price of the ticket '
   })
   @Expose()
   @IsNumber()
-  @IsNotEmpty()
-  private price: number;
+  @IsOptional()
+  private price?: number;
 
   @ApiProperty({
     name: 'id',
