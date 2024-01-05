@@ -6,10 +6,12 @@ import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { TicketDTO } from './dtos/ticket.dto';
 import { plainToInstance } from 'class-transformer';
+import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 describe('TicketController', () => {
   let controller: TicketController;
   const mockedService = {
-    create: jest.fn()
+    create: jest.fn(),
+    update: jest.fn()
   };
   const mockedAuthGuard = {
     canActivate: jest.fn()
@@ -81,6 +83,61 @@ describe('TicketController', () => {
     });
     try {
       await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect create update executed successfully', async () => {
+    const spy = jest.spyOn(mockedService, 'update').mockImplementation(() => Promise.resolve({ status: 200 }));
+    const dto: UpdateTicketDTO = plainToInstance(UpdateTicketDTO, {
+      user: {
+        id: 17
+      },
+      trip: {
+        id: 5
+      },
+      serviceType: {
+        id: 23
+      },
+      seats: [
+        {
+          id: 31,
+          booked: true
+        },
+        {
+          id: 32,
+          booked: true
+        }
+      ]
+    });
+    await controller.update(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 17);
+    expect(spy).toBeCalledTimes(1);
+  });
+  it('expect an Error when update method fails', async () => {
+    jest.spyOn(mockedService, 'update').mockImplementation(() => Promise.reject({ status: 404 }));
+    const dto: UpdateTicketDTO = plainToInstance(UpdateTicketDTO, {
+      user: {
+        id: 17
+      },
+      trip: {
+        id: 5
+      },
+      serviceType: {
+        id: 23
+      },
+      seats: [
+        {
+          id: 31,
+          booked: true
+        },
+        {
+          id: 32,
+          booked: true
+        }
+      ]
+    });
+    try {
+      await controller.update(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 17);
     } catch (error) {
       expect(error).toBeDefined();
     }

@@ -12,6 +12,9 @@ export class Ticket {
   @Column({ type: 'decimal' })
   price: number;
 
+  @Column({ type: Boolean, default: false })
+  cancelled: boolean;
+
   @ManyToMany(() => Seat)
   @JoinTable({
     name: 'tickets_seats',

@@ -11,6 +11,7 @@ import { Seat } from '../autobus/entities/seat.entity';
 import { Constants } from '../constants';
 import { SeatType } from '../seat-type/entities/seat-type.entity';
 import { ConfigService } from '@nestjs/config';
+import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 
 @Injectable()
 export class TicketService {
@@ -70,5 +71,29 @@ export class TicketService {
     });
     const price: number = fuelCostPerKm * kilometers + serviceTypeCost[serviceType.description.toLowerCase()] + seatCosts;
     return price;
+  }
+
+  async update(id: number, dto: UpdateTicketDTO): Promise<any> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const isCancelled: boolean = dto.getCancelled();
+      if (isCancelled) {
+        await queryRunner.manager.getRepository(Ticket).update(id, { cancelled: isCancelled });
+        const ticket: Ticket = await this.dataSource.getRepository(Ticket).createQueryBuilder('ticket').where('ticket.id = :id', { id }).innerJoinAndSelect('ticket.seats', 'seats').getOne();
+        const seats: Array<Seat> = ticket.seats;
+        for (const seat of seats) {
+          if (seat.booked) await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: false });
+        }
+        await queryRunner.commitTransaction();
+        return;
+      }
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
