@@ -15,7 +15,7 @@ const baseConfig = {
     synchronize: !!process.env.DB_SYNCHRONIZE,
     allowLoggingQueries: process.env.DB_ALLOW_LOGGING || true
   },
-  pricesConfig: JSON.parse(process.env.COSTS || '{"fuelCostPerKm":900,"serviceTypeCost":{"primera clase":1000,"economico":500},"seatTypeCost":{"asiento cama":600,"asiento simple":300}}'),
+  pricesConfig: JSON.parse(process.env.COSTS || '{"serviceTypeCost":{"primera clase":10000,"economico":5000},"seatTypeCost":{"asiento cama":10000,"asiento simple":5000},"fuelCostPerLt":900,"fuelPerKm":{"doble piso":2,"piso simple":1.78}}'),
   token: {
     secret: process.env.TOKEN_SECRET || 'thisIsAkeyforUcaFinalTp$',
     expiration: process.env.TOKEN_EXPIRATION || '10h'

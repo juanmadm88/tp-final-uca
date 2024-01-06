@@ -33,9 +33,19 @@ export class TicketService {
         if (seat.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
         await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: true });
       }
-      const trip: Trip = await this.dataSource.getRepository(Trip).createQueryBuilder('trip').innerJoinAndSelect('trip.destination', 'destination').innerJoinAndSelect('trip.origin', 'origin').where('trip.id = :id', { id: dto.getTrip().getId() }).getOne();
+      const trip: Trip = await this.dataSource
+        .getRepository(Trip)
+        .createQueryBuilder('trip')
+        .innerJoinAndSelect('trip.destination', 'destination')
+        .innerJoinAndSelect('trip.origin', 'origin')
+        .innerJoinAndSelect('trip.autobus', 'autobus')
+        .innerJoinAndSelect('autobus.model', 'model')
+        .innerJoinAndSelect('autobus.seats', 'seats')
+        .where('trip.id = :id', { id: dto.getTrip().getId() })
+        .getOne();
+      const numberOfSeats: number = trip.autobus.seats.length;
       const kilometers: number = trip.destination.kilometer - trip.origin.kilometer;
-      await queryRunner.manager.save(this.buildTicketEntity(dto, this.buildPrice({ serviceType: serviceTypeDB, kilometers, seatTypes })));
+      await queryRunner.manager.save(this.buildTicketEntity(dto, this.buildPrice({ serviceType: serviceTypeDB, kilometers, seatTypes, autobusModel: trip.autobus.model, numberOfSeats })));
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -62,14 +72,14 @@ export class TicketService {
     return ticket;
   }
   private buildPrice(args: any): number {
-    const { serviceType, kilometers, seatTypes } = args;
+    const { serviceType, kilometers, seatTypes, autobusModel, numberOfSeats } = args;
     const costs: any = this.configService.get<object>('appConfig.pricesConfig');
-    const { fuelCostPerKm, seatTypeCost, serviceTypeCost } = costs;
+    const { fuelCostPerLt, seatTypeCost, fuelPerKm, serviceTypeCost } = costs;
     let seatCosts: any = 0;
     seatTypes.forEach((element: any) => {
       seatCosts += seatTypeCost[element.description];
     });
-    const price: number = fuelCostPerKm * kilometers + serviceTypeCost[serviceType.description.toLowerCase()] + seatCosts;
+    const price: number = (fuelCostPerLt * fuelPerKm[autobusModel.description.toLowerCase()] * kilometers) / numberOfSeats + serviceTypeCost[serviceType.description.toLowerCase()] + seatCosts;
     return price;
   }
 
