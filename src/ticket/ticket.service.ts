@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UtilsService } from '../utils/utils.service';
 import { TicketDTO } from './dtos/ticket.dto';
 import { DataSource } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
@@ -15,7 +14,7 @@ import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 
 @Injectable()
 export class TicketService {
-  constructor(private utils: UtilsService, private dataSource: DataSource, private configService: ConfigService) {}
+  constructor(private dataSource: DataSource, private configService: ConfigService) {}
   async create(dto: TicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
