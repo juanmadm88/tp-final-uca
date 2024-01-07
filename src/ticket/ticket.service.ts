@@ -43,7 +43,7 @@ export class TicketService {
         .where('trip.id = :id', { id: dto.getTrip().getId() })
         .getOne();
       const numberOfSeats: number = trip.autobus.seats.length;
-      const kilometers: number = trip.destination.kilometer - trip.origin.kilometer;
+      const kilometers: number = Math.abs(trip.destination.kilometer - trip.origin.kilometer);
       await queryRunner.manager.save(this.buildTicketEntity(dto, this.buildPrice({ serviceType: serviceTypeDB, kilometers, seatTypes, autobusModel: trip.autobus.model, numberOfSeats })));
       await queryRunner.commitTransaction();
     } catch (error) {
