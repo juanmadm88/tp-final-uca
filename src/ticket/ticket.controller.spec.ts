@@ -154,7 +154,8 @@ describe('TicketController', () => {
         tripDestinationDescription: 'mar de ajo',
         tripOriginDescription: 'mar del plata',
         username: 'pepito',
-        serviceTypeDescription: 'primera clase'
+        serviceTypeDescription: 'primera clase',
+        cancelled: 'false'
       });
     } catch (error) {
       expect(error).toBeDefined();
