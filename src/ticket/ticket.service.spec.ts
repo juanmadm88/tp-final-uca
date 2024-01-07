@@ -519,13 +519,17 @@ describe('TripService', () => {
                             return {
                               innerJoinAndSelect: () => {
                                 return {
-                                  where: () => {
+                                  innerJoinAndSelect: () => {
                                     return {
-                                      skip: () => {
+                                      where: () => {
                                         return {
-                                          take: () => {
+                                          skip: () => {
                                             return {
-                                              getMany: jest.fn()
+                                              take: () => {
+                                                return {
+                                                  getMany: jest.fn()
+                                                };
+                                              }
                                             };
                                           }
                                         };

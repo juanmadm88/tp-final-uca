@@ -116,6 +116,7 @@ export class TicketService {
       .innerJoinAndSelect('ticket.trip', 'trip')
       .innerJoinAndSelect('trip.destination', 'tripDestination')
       .innerJoinAndSelect('trip.origin', 'tripOrigin')
+      .innerJoinAndSelect('ticket.seats', 'seats')
       .where(where, options.where)
       .skip(options.skip)
       .take(options.take)
