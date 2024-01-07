@@ -21,4 +21,16 @@ describe('UtilsService', () => {
     const result: any = service.buildDTO(plainObject, LoginDTO);
     expect(result).toBeInstanceOf(LoginDTO);
   });
+  it('expect empty string when calling buildQuery method with empty where ', () => {
+    const result = service.buildQuery(undefined, 'trip');
+    expect(!result.length).toBeTruthy();
+  });
+  it('expect empty string when calling buildQuery method with not valid entity ', () => {
+    const result = service.buildQuery({ atributte: 1 }, 'not valid');
+    expect(!result.length).toBeTruthy();
+  });
+  it('expect string query  ', () => {
+    const result = service.buildQuery({ originDescription: 'mar de ajo', destinationDescription: 'mar del plata' }, 'trip');
+    expect(result.length).toBeTruthy();
+  });
 });

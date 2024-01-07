@@ -11,7 +11,8 @@ import { BadRequestException } from '@nestjs/common';
 describe('TripService', () => {
   let service: TripService;
   const mockedUtilsService = {
-    buildDTO: jest.fn()
+    buildDTO: jest.fn(),
+    buildQuery: jest.fn()
   };
   const mockedManager = {
     save: jest.fn(),

@@ -9,6 +9,14 @@ export class Constants {
       originDescription: 'origin.description like :originDescription',
       destinationDescription: ' destination.description like :destinationDescription',
       departureDate: 'trip.departureDate like :departureDate'
+    },
+    ticket: {
+      userDescription: 'user.description like :userDescription',
+      serviceTypeDescription: 'serviceType.description like :serviceTypeDescription',
+      tripOriginDescription: 'trip.origin.description like :tripOriginDescription',
+      tripDestinationDescription: 'trip.destination.description like :tripDestinationDescription',
+      tripArrivalDate: 'trip.arrivalDate like :tripArrivalDate',
+      tripDepartureDate: 'trip.departureDate like :tripDepartureDate'
     }
   };
 }

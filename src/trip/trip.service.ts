@@ -81,7 +81,7 @@ export class TripService {
   }
 
   async findAll(options: FindManyOptions = {}): Promise<Array<TripDTO>> {
-    const where: string = this.buildQuery(options.where);
+    const where: string = this.utils.buildQuery(options.where, 'trip');
     const trip = await this.dataSource
       .getRepository(Trip)
       .createQueryBuilder('trip')
@@ -93,17 +93,6 @@ export class TripService {
       .take(options.take)
       .getMany();
     return this.utils.buildDTO(trip, TripDTO);
-  }
-
-  private buildQuery(where = {}): string {
-    let query = '';
-    if (!Object.keys(where).length) {
-      return query;
-    }
-    Object.keys(where).forEach((key) => {
-      if (Constants.WHERE_CLAUSES.trip[key]) query += `${query ? ' AND' : ''} ${Constants.WHERE_CLAUSES.trip[key]}`;
-    });
-    return query;
   }
 
   async findById(id: number): Promise<TripDTO> {
