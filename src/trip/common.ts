@@ -9,6 +9,7 @@ export interface QueryParamsTicket extends QueryParams {
   tripDestinationDescription?: string;
   tripArrivalDate?: string;
   tripDepartureDate?: string;
+  cancelled?: string;
 }
 export interface QueryParamsTrip extends QueryParams {
   destinationDescription?: string;

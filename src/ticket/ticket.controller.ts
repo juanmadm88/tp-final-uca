@@ -187,6 +187,7 @@ export class TicketController {
     if (args.tripOriginDescription) where = { ...where, tripOriginDescription: `%${args.tripOriginDescription}%` };
     if (args.tripDestinationDescription) where = { ...where, tripDestinationDescription: `%${args.tripDestinationDescription}%` };
     if (args.tripArrivalDate) where = { ...where, tripArrivalDate: `%${args.tripArrivalDate}%` };
+    if (args.cancelled) where = { ...where, cancelled: args.cancelled === 'true' };
     if (args.tripDepartureDate) where = { ...where, tripDepartureDate: `%${args.tripDepartureDate}%` };
     if (Object.keys(where).length > 0) result.where = where;
     return result;

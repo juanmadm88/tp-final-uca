@@ -16,7 +16,8 @@ export class Constants {
       tripOriginDescription: 'tripOrigin.description like :tripOriginDescription',
       tripDestinationDescription: 'tripDestination.description like :tripDestinationDescription',
       tripArrivalDate: 'trip.arrivalDate like :tripArrivalDate',
-      tripDepartureDate: 'trip.departureDate like :tripDepartureDate'
+      tripDepartureDate: 'trip.departureDate like :tripDepartureDate',
+      cancelled: 'cancelled = :cancelled'
     }
   };
 }
