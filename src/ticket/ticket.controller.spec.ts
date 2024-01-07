@@ -11,7 +11,8 @@ describe('TicketController', () => {
   let controller: TicketController;
   const mockedService = {
     create: jest.fn(),
-    update: jest.fn()
+    update: jest.fn(),
+    findAll: jest.fn()
   };
   const mockedAuthGuard = {
     canActivate: jest.fn()
@@ -141,5 +142,26 @@ describe('TicketController', () => {
     } catch (error) {
       expect(error).toBeDefined();
     }
+  });
+  it('expect an Error when findAll service method fails', async () => {
+    jest.spyOn(mockedService, 'findAll').mockImplementation(() => Promise.reject({ status: 404 }));
+    try {
+      await controller.get('9568be23-16c6-4d87-8dd0-614b34a6c830', {
+        skip: 1,
+        size: 3,
+        tripDepartureDate: '2020-09-11',
+        tripArrivalDate: '2020-09-11',
+        tripDestinationDescription: 'mar de ajo',
+        tripOriginDescription: 'mar del plata',
+        username: 'pepito',
+        serviceTypeDescription: 'primera clase'
+      });
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect get method to be successfully executed ', async () => {
+    jest.spyOn(mockedService, 'findAll').mockImplementation(() => Promise.resolve());
+    await controller.get('9568be23-16c6-4d87-8dd0-614b34a6c830', undefined);
   });
 });

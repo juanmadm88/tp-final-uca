@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TicketDTO } from './dtos/ticket.dto';
-import { DataSource } from 'typeorm';
+import { DataSource, FindManyOptions } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { ServiceType } from '../service-type/entities/service-type.entity';
 import { User } from '../user/entities/user.entity';
@@ -11,10 +11,11 @@ import { Constants } from '../constants';
 import { SeatType } from '../seat-type/entities/seat-type.entity';
 import { ConfigService } from '@nestjs/config';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class TicketService {
-  constructor(private dataSource: DataSource, private configService: ConfigService) {}
+  constructor(private dataSource: DataSource, private configService: ConfigService, private utils: UtilsService) {}
   async create(dto: TicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -104,5 +105,21 @@ export class TicketService {
     } finally {
       await queryRunner.release();
     }
+  }
+  async findAll(options: FindManyOptions = {}): Promise<Array<TicketDTO>> {
+    const where: string = this.utils.buildQuery(options.where, 'ticket');
+    const tickets = await this.dataSource
+      .getRepository(Ticket)
+      .createQueryBuilder('ticket')
+      .innerJoinAndSelect('ticket.user', 'user')
+      .innerJoinAndSelect('ticket.serviceType', 'serviceType')
+      .innerJoinAndSelect('ticket.trip', 'trip')
+      .innerJoinAndSelect('trip.destination', 'tripDestination')
+      .innerJoinAndSelect('trip.origin', 'tripOrigin')
+      .where(where, options.where)
+      .skip(options.skip)
+      .take(options.take)
+      .getMany();
+    return this.utils.buildDTO(tickets, TicketDTO);
   }
 }

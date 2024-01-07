@@ -11,10 +11,10 @@ export class Constants {
       departureDate: 'trip.departureDate like :departureDate'
     },
     ticket: {
-      userDescription: 'user.description like :userDescription',
+      username: 'user.username like :username',
       serviceTypeDescription: 'serviceType.description like :serviceTypeDescription',
-      tripOriginDescription: 'trip.origin.description like :tripOriginDescription',
-      tripDestinationDescription: 'trip.destination.description like :tripDestinationDescription',
+      tripOriginDescription: 'tripOrigin.description like :tripOriginDescription',
+      tripDestinationDescription: 'tripDestination.description like :tripDestinationDescription',
       tripArrivalDate: 'trip.arrivalDate like :tripArrivalDate',
       tripDepartureDate: 'trip.departureDate like :tripDepartureDate'
     }

@@ -100,7 +100,7 @@ describe('TripController', () => {
       expect(error).toBeDefined();
     }
   });
-  it('expect an Error when findById service method fails', async () => {
+  it('expect an Error when findAll service method fails', async () => {
     jest.spyOn(mockedService, 'findAll').mockImplementation(() => Promise.reject({ status: 404 }));
     try {
       await controller.get('9568be23-16c6-4d87-8dd0-614b34a6c830', { skip: 1, size: 3, departureDate: '2020-09-11', destinationDescription: 'mar de ajo', originDescription: 'mar del plata' });

@@ -6,7 +6,7 @@ import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { TripDTO } from './dtos/trip.dto';
 import { UpdateTripDTO } from './dtos/update-trip.dto';
-import { QueryParams } from './common';
+import { QueryParamsTrip } from './common';
 import { FindManyOptions } from 'typeorm';
 @ApiTags('Trip')
 @Controller('trip')
@@ -137,7 +137,7 @@ export class TripController {
     description: 'Departure date of the Trip '
   })
   @Get('/')
-  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params: QueryParams) {
+  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params: QueryParamsTrip) {
     try {
       const options: FindManyOptions = this.buildOptions(params);
       return await this.service.findAll(options);
@@ -194,7 +194,8 @@ export class TripController {
       this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
     }
   }
-  private buildOptions(args: QueryParams = {}): FindManyOptions {
+  //TODO: PASARLO AL UTILSERVICE
+  private buildOptions(args: QueryParamsTrip = {}): FindManyOptions {
     const result: FindManyOptions = {};
     let where: any = {};
     if (args.skip) result.skip = args.skip;

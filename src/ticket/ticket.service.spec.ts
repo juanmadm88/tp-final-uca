@@ -9,6 +9,7 @@ import { Seat } from '../autobus/entities/seat.entity';
 import { TicketDTO } from './dtos/ticket.dto';
 import { BadRequestException } from '@nestjs/common';
 import { SeatType } from '../seat-type/entities/seat-type.entity';
+import { UtilsService } from '../utils/utils.service';
 
 describe('TripService', () => {
   let service: TicketService;
@@ -47,7 +48,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, ConfigService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, ConfigService, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     expect(service).toBeDefined();
@@ -107,7 +108,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     expect(service).toBeDefined();
@@ -173,7 +174,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     expect(service).toBeDefined();
@@ -241,7 +242,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     expect(service).toBeDefined();
@@ -337,7 +338,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     expect(service).toBeDefined();
@@ -456,7 +457,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     expect(service).toBeDefined();
@@ -477,5 +478,85 @@ describe('TripService', () => {
         }
       })
     );
+  });
+  it('expect findAll method to be executed successfully', async () => {
+    const mockedUtilsService = {
+      buildDTO: jest.fn(),
+      buildQuery: jest.fn()
+    };
+    const mockedManager = {
+      save: jest.fn(),
+      update: jest.fn(),
+      getRepository: () => {
+        return {
+          update: jest.fn()
+        };
+      }
+    };
+    const mockedDataSource = {
+      createQueryRunner: () => {
+        return {
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          release: jest.fn(),
+          manager: mockedManager
+        };
+      },
+      getRepository: () => {
+        return {
+          update: jest.fn(),
+          createQueryBuilder: () => {
+            return {
+              innerJoinAndSelect: () => {
+                return {
+                  innerJoinAndSelect: () => {
+                    return {
+                      innerJoinAndSelect: () => {
+                        return {
+                          innerJoinAndSelect: () => {
+                            return {
+                              innerJoinAndSelect: () => {
+                                return {
+                                  where: () => {
+                                    return {
+                                      skip: () => {
+                                        return {
+                                          take: () => {
+                                            return {
+                                              getMany: jest.fn()
+                                            };
+                                          }
+                                        };
+                                      }
+                                    };
+                                  }
+                                };
+                              }
+                            };
+                          }
+                        };
+                      }
+                    };
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, ConfigService, { provide: UtilsService, useValue: mockedUtilsService }]
+    }).compile();
+    jest.spyOn(mockedUtilsService, 'buildDTO').mockImplementation(() =>
+      plainToInstance(TicketDTO, [
+        { id: 1, price: 129.1 },
+        { id: 2, price: 230.3 }
+      ])
+    );
+    service = module.get<TicketService>(TicketService);
+    await service.findAll();
   });
 });
