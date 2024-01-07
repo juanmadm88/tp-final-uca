@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, IsNumber, IsNotEmptyObject, ValidateNested, IsArray } from 'class-validator';
+import { IsOptional, IsNumber, IsNotEmptyObject, ValidateNested, IsArray, IsBoolean } from 'class-validator';
 import { CreateUserDTO } from './create-user.dto';
 import { CreateTripDTO } from './create-trip.dto';
 import { CreateSeatDTO } from './create-seat.dto';
@@ -11,15 +11,29 @@ import { CreateServiceTypeDTO } from './create-service-type.dto';
 export class TicketDTO {
   constructor(args: any) {
     if (args) {
-      const { price, id, user, seats, trip, serviceType } = args;
+      const { price, id, user, seats, trip, serviceType, cancelled } = args;
       if (id) this.id = id;
       if (price) this.price = price;
       if (user) this.user = user;
       if (seats) this.seats = seats;
       if (trip) this.trip = trip;
       if (serviceType) this.serviceType = serviceType;
+      if (cancelled) this.cancelled = cancelled;
     }
   }
+
+  @ApiProperty({
+    name: 'cancelled',
+    type: 'boolean',
+    required: false,
+    default: false,
+    description: 'Indicates whether the Ticket is cancelled or not'
+  })
+  @IsOptional()
+  @IsBoolean()
+  @Expose()
+  private cancelled?: boolean;
+
   @ApiProperty({
     name: 'user',
     type: CreateUserDTO,
@@ -125,5 +139,11 @@ export class TicketDTO {
   }
   public setServiceType(value: CreateServiceTypeDTO) {
     this.serviceType = value;
+  }
+  public getCancelled(): boolean {
+    return this.cancelled;
+  }
+  public setCancelled(value: boolean) {
+    this.cancelled = value;
   }
 }

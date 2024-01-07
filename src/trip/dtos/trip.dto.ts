@@ -55,7 +55,7 @@ export class TripDTO {
     name: 'destination',
     type: TerminalDTO,
     required: true,
-    description: 'The origin of the Trip '
+    description: 'The destination of the Trip '
   })
   @IsNotEmptyObject()
   @ValidateNested()
