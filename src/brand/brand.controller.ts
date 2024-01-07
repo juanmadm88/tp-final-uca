@@ -6,7 +6,7 @@ import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { BrandDTO } from './dtos/brand.dto';
 import { FindManyOptions } from 'typeorm';
-import { QueryParams } from '../trip/common';
+import { QueryParams } from '../constants/common';
 @ApiTags('Brand')
 @Controller('brand')
 @UseGuards(AuthGuard)

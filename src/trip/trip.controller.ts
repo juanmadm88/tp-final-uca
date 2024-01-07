@@ -6,7 +6,7 @@ import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { TripDTO } from './dtos/trip.dto';
 import { UpdateTripDTO } from './dtos/update-trip.dto';
-import { QueryParamsTrip } from './common';
+import { QueryParamsTrip } from '../constants/common';
 import { FindManyOptions } from 'typeorm';
 @ApiTags('Trip')
 @Controller('trip')

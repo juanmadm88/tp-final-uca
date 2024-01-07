@@ -7,7 +7,7 @@ import { AuthGuard } from '../authentication/auth.guard';
 import { ServiceTypeDTO } from './dtos/service-type.dto';
 import { UpdateServiceTypeDTO } from './dtos/update-service-type.dto';
 import { FindManyOptions } from 'typeorm';
-import { QueryParams } from '../trip/common';
+import { QueryParams } from '../constants/common';
 @ApiTags('ServiceType')
 @Controller('serviceType')
 @UseGuards(AuthGuard)

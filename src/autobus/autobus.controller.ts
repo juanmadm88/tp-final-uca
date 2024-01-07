@@ -7,7 +7,7 @@ import { AuthGuard } from '../authentication/auth.guard';
 import { AutoBusDTO } from './dtos/autobus.dto';
 import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';
 import { FindManyOptions } from 'typeorm';
-import { QueryParams } from '../trip/common';
+import { QueryParams } from '../constants/common';
 @ApiTags('Autobus')
 @Controller('autobus')
 @UseGuards(AuthGuard)

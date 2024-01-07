@@ -7,7 +7,7 @@ import { AuthGuard } from '../authentication/auth.guard';
 import { SeatTypeDTO } from './dtos/seat-type.dto';
 import { UpdateSeatTypeDTO } from './dtos/update-service-type.dto';
 import { FindManyOptions } from 'typeorm';
-import { QueryParams } from '../trip/common';
+import { QueryParams } from '../constants/common';
 @ApiTags('SeatType')
 @Controller('seatType')
 @UseGuards(AuthGuard)

@@ -7,7 +7,7 @@ import { AuthGuard } from '../authentication/auth.guard';
 import { TicketDTO } from './dtos/ticket.dto';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { FindManyOptions } from 'typeorm';
-import { QueryParamsTicket } from '../trip/common';
+import { QueryParamsTicket } from '../constants/common';
 
 @ApiTags('Ticket')
 @Controller('ticket')

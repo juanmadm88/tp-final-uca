@@ -1,7 +1,7 @@
 import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { Constants } from '../constants';
-import { QueryParamsTicket } from '../trip/common';
+import { QueryParamsTicket } from '../constants/common';
 import { FindManyOptions } from 'typeorm';
 
 @Injectable()

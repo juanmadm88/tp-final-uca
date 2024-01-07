@@ -5,7 +5,7 @@ import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { TerminalDTO } from './dtos/terminal.dto';
-import { QueryParams } from '../trip/common';
+import { QueryParams } from '../constants/common';
 import { FindManyOptions } from 'typeorm';
 @ApiTags('Terminal')
 @Controller('terminal')
