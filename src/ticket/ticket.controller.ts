@@ -163,7 +163,7 @@ export class TicketController {
   @Get('/')
   async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params: QueryParamsTicket) {
     try {
-      const options: FindManyOptions = this.buildOptions(params);
+      const options: FindManyOptions = this.utilsService.buildOptions(params);
       return await this.service.findAll(options);
     } catch (error) {
       this.logger.log({
@@ -175,21 +175,5 @@ export class TicketController {
       });
       this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
     }
-  }
-  //TODO: PASARLO AL UTILSERVICE
-  private buildOptions(args: QueryParamsTicket = {}): FindManyOptions {
-    const result: FindManyOptions = {};
-    let where: any = {};
-    if (args.skip) result.skip = args.skip;
-    if (args.size) result.take = args.size;
-    if (args.username) where = { username: `%${args.username}%` };
-    if (args.serviceTypeDescription) where = { ...where, serviceTypeDescription: `%${args.serviceTypeDescription}%` };
-    if (args.tripOriginDescription) where = { ...where, tripOriginDescription: `%${args.tripOriginDescription}%` };
-    if (args.tripDestinationDescription) where = { ...where, tripDestinationDescription: `%${args.tripDestinationDescription}%` };
-    if (args.tripArrivalDate) where = { ...where, tripArrivalDate: `%${args.tripArrivalDate}%` };
-    if (args.cancelled) where = { ...where, cancelled: args.cancelled === 'true' };
-    if (args.tripDepartureDate) where = { ...where, tripDepartureDate: `%${args.tripDepartureDate}%` };
-    if (Object.keys(where).length > 0) result.where = where;
-    return result;
   }
 }

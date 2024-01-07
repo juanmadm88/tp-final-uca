@@ -33,4 +33,12 @@ describe('UtilsService', () => {
     const result = service.buildQuery({ originDescription: 'mar de ajo', destinationDescription: 'mar del plata' }, 'trip');
     expect(result.length).toBeTruthy();
   });
+  it('expect empty object  ', () => {
+    const result = service.buildOptions(undefined);
+    expect(!Object.keys(result).length).toBeTruthy();
+  });
+  it('expect object with keys  ', () => {
+    const result = service.buildOptions({ skip: 10, size: 30, cancelled: 'false', tripArrivalDate: '2022' });
+    expect(Object.keys(result).length).toBeTruthy();
+  });
 });

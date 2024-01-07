@@ -139,7 +139,7 @@ export class TripController {
   @Get('/')
   async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params: QueryParamsTrip) {
     try {
-      const options: FindManyOptions = this.buildOptions(params);
+      const options: FindManyOptions = this.utilsService.buildOptions(params);
       return await this.service.findAll(options);
     } catch (error) {
       this.logger.log({
@@ -193,17 +193,5 @@ export class TripController {
       });
       this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
     }
-  }
-  //TODO: PASARLO AL UTILSERVICE
-  private buildOptions(args: QueryParamsTrip = {}): FindManyOptions {
-    const result: FindManyOptions = {};
-    let where: any = {};
-    if (args.skip) result.skip = args.skip;
-    if (args.size) result.take = args.size;
-    if (args.originDescription) where = { originDescription: `%${args.originDescription}%` };
-    if (args.destinationDescription) where = { ...where, destinationDescription: `%${args.destinationDescription}%` };
-    if (args.departureDate) where = { ...where, departureDate: `%${args.departureDate}%` };
-    if (Object.keys(where).length > 0) result.where = where;
-    return result;
   }
 }
