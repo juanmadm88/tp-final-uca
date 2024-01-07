@@ -6,6 +6,8 @@ import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { ServiceTypeDTO } from './dtos/service-type.dto';
 import { UpdateServiceTypeDTO } from './dtos/update-service-type.dto';
+import { FindManyOptions } from 'typeorm';
+import { QueryParams } from '../trip/common';
 @ApiTags('ServiceType')
 @Controller('serviceType')
 @UseGuards(AuthGuard)
@@ -122,9 +124,10 @@ export class ServiceTypeController {
     description: 'Number of Service Types to be returned '
   })
   @Get('/')
-  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query('skip') skip?: number, @Query('size') size?: number) {
+  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParams) {
     try {
-      return await this.service.findAll({ skip, take: size });
+      const options: FindManyOptions = this.utilsService.buildOptions(params);
+      return await this.service.findAll(options);
     } catch (error) {
       this.logger.log({
         level: 'error',

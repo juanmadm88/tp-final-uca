@@ -18,10 +18,17 @@ describe('ModelController', () => {
   const mockedLogger = {
     log: jest.fn()
   };
+  const mockedUtilsService = {
+    buildOptions: jest.fn()
+  };
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [ModelController],
-      providers: [{ provide: ModelService, useValue: mockedService }, { provide: Logger, useValue: mockedLogger }, UtilsService]
+      providers: [
+        { provide: ModelService, useValue: mockedService },
+        { provide: Logger, useValue: mockedLogger },
+        { provide: UtilsService, useValue: mockedUtilsService }
+      ]
     })
       .overrideGuard(AuthGuard)
       .useValue(mockedAuthGuard)

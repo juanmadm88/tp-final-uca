@@ -36,7 +36,7 @@ export class UtilsService {
     for (const key of Object.keys(args)) {
       if (['skip', 'size'].includes(key)) {
         const aux: any = {};
-        aux[key] = args[key];
+        key === 'size' ? (aux['take'] = args[key]) : (aux[key] = args[key]);
         result = { ...result, ...aux };
         continue;
       }

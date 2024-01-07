@@ -48,6 +48,28 @@ describe('SeatTypeService', () => {
     const response = await service.findAll({ skip: 2, take: 1 });
     expect(response).toBeDefined();
   });
+  it('expect an Array of Seat Type when find method is called without any filter ', async () => {
+    const result: Array<SeatType> = [
+      { description: 'primera clase', isActive: true, id: 1 },
+      { description: 'economico', isActive: true, id: 2 }
+    ];
+    const dto: Array<SeatTypeDTO> = plainToInstance(SeatTypeDTO, result);
+    mockedFind.mockImplementationOnce(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
+    const response = await service.findAll();
+    expect(response).toBeDefined();
+  });
+  it('expect an Array of Seat Type when find method is called with a where clause ', async () => {
+    const result: Array<SeatType> = [
+      { description: 'primera clase', isActive: true, id: 1 },
+      { description: 'economico', isActive: true, id: 2 }
+    ];
+    const dto: Array<SeatTypeDTO> = plainToInstance(SeatTypeDTO, result);
+    mockedFind.mockImplementationOnce(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
+    const response = await service.findAll({ where: { description: 'sarasa' } });
+    expect(response).toBeDefined();
+  });
   it('expect update method to be called succesfully ', async () => {
     const dto: UpdateSeatTypeDTO = plainToInstance(UpdateSeatTypeDTO, { description: 'asiento cama' });
     mockedUpdate.mockImplementationOnce(() => Promise.resolve());

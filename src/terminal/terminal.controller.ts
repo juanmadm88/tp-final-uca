@@ -5,6 +5,8 @@ import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { TerminalDTO } from './dtos/terminal.dto';
+import { QueryParams } from '../trip/common';
+import { FindManyOptions } from 'typeorm';
 @ApiTags('Terminal')
 @Controller('terminal')
 @UseGuards(AuthGuard)
@@ -67,9 +69,10 @@ export class TerminalController {
     required: true
   })
   @Get('/')
-  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query('skip') skip?: number, @Query('size') size?: number) {
+  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParams) {
     try {
-      return await this.service.findAll({ skip, take: size });
+      const options: FindManyOptions = this.utilsService.buildOptions(params);
+      return await this.service.findAll(options);
     } catch (error) {
       this.logger.log({
         level: 'error',

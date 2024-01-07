@@ -9,7 +9,8 @@ import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';
 describe('AutobusService', () => {
   let service: AutobusService;
   const mockedUtilsService = {
-    buildDTO: jest.fn()
+    buildDTO: jest.fn(),
+    buildOptions: jest.fn()
   };
   const mockedManager = {
     save: jest.fn(),
@@ -202,10 +203,12 @@ describe('AutobusService', () => {
       }
     ];
     const dto: Array<AutoBusDTO> = plainToInstance(AutoBusDTO, result);
-    jest.spyOn(mockedManager, 'find').mockImplementationOnce(() => Promise.resolve(result));
-    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
-    const response = await service.findAll({ skip: 2, take: 1 });
+    jest.spyOn(mockedManager, 'find').mockImplementation(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementation(() => Promise.resolve(dto));
+    const response = await service.findAll({ skip: 2, take: 1, where: { description: 'sarasa' } });
     expect(response).toBeDefined();
+    const secondResponse = await service.findAll();
+    expect(secondResponse).toBeDefined();
   });
   it('expect an Array of Autobuses when find method is called ', async () => {
     const result = {

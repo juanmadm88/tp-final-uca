@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Terminal } from './entities/terminal.entity';
 import { UtilsService } from '../utils/utils.service';
 import { TerminalDTO } from './dtos/terminal.dto';
@@ -8,11 +8,11 @@ import { TerminalDTO } from './dtos/terminal.dto';
 @Injectable()
 export class TerminalService {
   constructor(@InjectRepository(Terminal) private readonly repository: Repository<Terminal>, private utils: UtilsService) {}
-  async findAll(paginationOptions: FindManyOptions = {}): Promise<Array<TerminalDTO>> {
-    const pagination: any = {};
-    if (paginationOptions.skip) pagination.skip = paginationOptions.skip;
-    if (paginationOptions.take) pagination.take = paginationOptions.take;
-    return this.utils.buildDTO(await this.repository.find(pagination), TerminalDTO);
+  async findAll(options: FindManyOptions = {}): Promise<Array<TerminalDTO>> {
+    if ((options.where as any)?.description) {
+      (options.where as any).description = Like(`${(options.where as any).description}`);
+    }
+    return this.utils.buildDTO(await this.repository.find(options), TerminalDTO);
   }
   private buildModelEntity(dto: any): Terminal {
     const entity: Terminal = new Terminal();

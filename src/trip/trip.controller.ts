@@ -137,7 +137,7 @@ export class TripController {
     description: 'Departure date of the Trip '
   })
   @Get('/')
-  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params: QueryParamsTrip) {
+  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParamsTrip) {
     try {
       const options: FindManyOptions = this.utilsService.buildOptions(params);
       return await this.service.findAll(options);

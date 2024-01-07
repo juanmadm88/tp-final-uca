@@ -7,7 +7,7 @@ import { AuthGuard } from '../authentication/auth.guard';
 import { TicketDTO } from './dtos/ticket.dto';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { FindManyOptions } from 'typeorm';
-import { QueryParamsTicket } from 'src/trip/common';
+import { QueryParamsTicket } from '../trip/common';
 
 @ApiTags('Ticket')
 @Controller('ticket')
@@ -161,7 +161,7 @@ export class TicketController {
     description: 'Trip Arrival Date'
   })
   @Get('/')
-  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params: QueryParamsTicket) {
+  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParamsTicket) {
     try {
       const options: FindManyOptions = this.utilsService.buildOptions(params);
       return await this.service.findAll(options);

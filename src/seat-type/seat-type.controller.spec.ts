@@ -17,13 +17,20 @@ describe('SeatTypeController', () => {
   const mockedAuthGuard = {
     canActivate: jest.fn()
   };
+  const mockedUtilsService = {
+    buildOptions: jest.fn()
+  };
   const mockedLogger = {
     log: jest.fn()
   };
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [SeatTypeController],
-      providers: [{ provide: SeatTypeService, useValue: mockedSeatTypeService }, { provide: Logger, useValue: mockedLogger }, UtilsService]
+      providers: [
+        { provide: SeatTypeService, useValue: mockedSeatTypeService },
+        { provide: Logger, useValue: mockedLogger },
+        { provide: UtilsService, useValue: mockedUtilsService }
+      ]
     })
       .overrideGuard(AuthGuard)
       .useValue(mockedAuthGuard)

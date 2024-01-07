@@ -6,6 +6,8 @@ import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
 import { SeatTypeDTO } from './dtos/seat-type.dto';
 import { UpdateSeatTypeDTO } from './dtos/update-service-type.dto';
+import { FindManyOptions } from 'typeorm';
+import { QueryParams } from '../trip/common';
 @ApiTags('SeatType')
 @Controller('seatType')
 @UseGuards(AuthGuard)
@@ -110,9 +112,10 @@ export class SeatTypeController {
     required: true
   })
   @Get('/')
-  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query('skip') skip?: number, @Query('size') size?: number) {
+  async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParams) {
     try {
-      return await this.service.findAll({ skip, take: size });
+      const options: FindManyOptions = this.utilsService.buildOptions(params);
+      return await this.service.findAll(options);
     } catch (error) {
       this.logger.log({
         level: 'error',

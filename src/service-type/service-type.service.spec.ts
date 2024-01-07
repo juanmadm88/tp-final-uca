@@ -43,10 +43,12 @@ describe('ServiceTypeService', () => {
       { description: 'economico', isActive: true, id: 2 }
     ];
     const dto: Array<ServiceTypeDTO> = plainToInstance(ServiceTypeDTO, result);
-    mockedFind.mockImplementationOnce(() => Promise.resolve(result));
-    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
-    const response = await service.findAll({ skip: 2, take: 1 });
+    mockedFind.mockImplementation(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementation(() => Promise.resolve(dto));
+    const response = await service.findAll({ skip: 2, take: 1, where: { description: 'saras' } });
     expect(response).toBeDefined();
+    const secondResponse = await service.findAll();
+    expect(secondResponse).toBeDefined();
   });
   it('expect update method to be called succesfully ', async () => {
     const dto: UpdateServiceTypeDTO = plainToInstance(UpdateServiceTypeDTO, { description: 'primera clase' });

@@ -34,15 +34,17 @@ describe('ModelService', () => {
       expect(error).toBeDefined();
     }
   });
-  it('expect an Array of Brand when find method is called ', async () => {
+  it('expect an Array of Model when find method is called ', async () => {
     const result: Array<Model> = [
       { description: 'modelo 1', id: 1 },
       { description: 'modelo 2', id: 2 }
     ];
     const dto: Array<ModelDTO> = plainToInstance(ModelDTO, result);
-    mockedFind.mockImplementationOnce(() => Promise.resolve(result));
-    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
-    const response = await service.findAll({ skip: 2, take: 1 });
+    mockedFind.mockImplementation(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementation(() => Promise.resolve(dto));
+    const response = await service.findAll({ skip: 2, take: 1, where: { description: 'sarasa' } });
     expect(response).toBeDefined();
+    const secondResponse = await service.findAll();
+    expect(secondResponse).toBeDefined();
   });
 });

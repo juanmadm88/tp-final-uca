@@ -135,7 +135,7 @@ describe('AutobusController', () => {
   it('expect an Error when findById service method fails', async () => {
     jest.spyOn(mockedService, 'findAll').mockImplementation(() => Promise.reject({ status: 404 }));
     try {
-      await controller.get('9568be23-16c6-4d87-8dd0-614b34a6c830', 1);
+      await controller.get('9568be23-16c6-4d87-8dd0-614b34a6c830', {});
     } catch (error) {
       expect(error).toBeDefined();
     }

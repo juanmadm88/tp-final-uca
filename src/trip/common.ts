@@ -1,6 +1,7 @@
 export interface QueryParams {
   skip?: number;
   size?: number;
+  description?: string;
 }
 export interface QueryParamsTicket extends QueryParams {
   username?: string;

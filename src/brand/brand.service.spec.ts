@@ -40,9 +40,11 @@ describe('BrandService', () => {
       { description: 'Scania', id: 2 }
     ];
     const dto: Array<BrandDTO> = plainToInstance(BrandDTO, result);
-    mockedFind.mockImplementationOnce(() => Promise.resolve(result));
-    mockedUtilsService.buildDTO.mockImplementationOnce(() => Promise.resolve(dto));
-    const response = await service.findAll({ skip: 2, take: 1 });
+    mockedFind.mockImplementation(() => Promise.resolve(result));
+    mockedUtilsService.buildDTO.mockImplementation(() => Promise.resolve(dto));
+    const response = await service.findAll({ skip: 2, take: 1, where: { description: 'sarasa' } });
     expect(response).toBeDefined();
+    const secondResponse = await service.findAll();
+    expect(secondResponse).toBeDefined();
   });
 });
