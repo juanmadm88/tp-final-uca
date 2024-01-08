@@ -119,9 +119,15 @@ export class ServiceTypeController {
   })
   @ApiQuery({
     name: 'size',
-    type: 'string',
+    type: 'number',
     required: false,
     description: 'Number of Service Types to be returned '
+  })
+  @ApiQuery({
+    name: 'description',
+    type: 'string',
+    required: false,
+    description: 'Description of Service Type '
   })
   @Get('/')
   async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParams) {

@@ -149,10 +149,16 @@ export class TicketController {
     description: 'User who booked the ticket '
   })
   @ApiQuery({
+    name: 'cancelled',
+    type: 'string',
+    required: false,
+    description: 'Indicates whether the Ticket is cancelled or not '
+  })
+  @ApiQuery({
     name: 'serviceTypeDescription',
     type: 'string',
     required: false,
-    description: 'Service Type booked '
+    description: 'Service Type description '
   })
   @ApiQuery({
     name: 'tripArrivalDate',

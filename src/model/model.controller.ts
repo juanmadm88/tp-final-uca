@@ -1,6 +1,6 @@
 import { Controller, Logger, Post, UseFilters, UseGuards, Headers, HttpCode, HttpStatus, Body, Get, Query } from '@nestjs/common';
 import { ModelService } from './model.service';
-import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
 import { AuthGuard } from '../authentication/auth.guard';
@@ -67,6 +67,24 @@ export class ModelController {
     name: 'Authorization',
     description: 'Bearer Token',
     required: true
+  })
+  @ApiQuery({
+    name: 'skip',
+    type: 'number',
+    required: false,
+    description: 'Number of Models to be skipped '
+  })
+  @ApiQuery({
+    name: 'size',
+    type: 'number',
+    required: false,
+    description: 'Number of Models to be returned '
+  })
+  @ApiQuery({
+    name: 'description',
+    type: 'string',
+    required: false,
+    description: 'Description of the Model '
   })
   @Get('/')
   async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParams) {

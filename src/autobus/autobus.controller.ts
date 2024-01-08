@@ -119,9 +119,15 @@ export class AutobusController {
   })
   @ApiQuery({
     name: 'size',
-    type: 'string',
+    type: 'number',
     required: false,
     description: 'Number of Autobuses to be returned '
+  })
+  @ApiQuery({
+    name: 'description',
+    type: 'string',
+    required: false,
+    description: 'Description of the Autobus '
   })
   @Get('/')
   async get(@Headers('unique-trace-id') uniqueTraceId: string, @Query() params?: QueryParams) {
