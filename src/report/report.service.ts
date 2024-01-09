@@ -29,4 +29,14 @@ export class ReportService {
       .where(whereString, options.where)
       .getRawMany();
   }
+  async getTicketSold(options: FindManyOptions = {}): Promise<any> {
+    const whereString: string = this.utils.buildQuery(options.where, 'ticketSold');
+    const queryBuilder = this.dataSource.createQueryBuilder();
+    return await queryBuilder.select('COUNT(DISTINCT ticket.id) AS "Tickets Vendidos "').from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').where(whereString, options.where).getRawMany();
+  }
+  async getBilling(options: FindManyOptions = {}): Promise<any> {
+    const whereString: string = this.utils.buildQuery(options.where, 'ticketSold');
+    const queryBuilder = this.dataSource.createQueryBuilder();
+    return await queryBuilder.select('SUM(ticket.price) AS "Facturacion "').from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').where(whereString, options.where).getRawMany();
+  }
 }
