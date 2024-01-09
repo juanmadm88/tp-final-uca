@@ -4,6 +4,7 @@ export class Constants {
   public static readonly TRIP_NOT_ALLOWED_TO_UPDATE: string = 'The trip is not finished yet, so can´t be updated';
   public static readonly AUTOBUS_ALREADY_ASIGNED: string = 'Autobus is asigned to another trip';
   public static readonly SEAT_ALREADY_BOOKED: string = 'There are some Seats that have been already booked';
+  public static readonly BOOLEAN_FIELDS: string[] = ['cancelled', 'autobusIsAsigned', 'ticketCancelled'];
   public static readonly WHERE_CLAUSES: any = {
     trip: {
       originDescription: 'origin.description like :originDescription',
@@ -18,6 +19,10 @@ export class Constants {
       tripArrivalDate: 'trip.arrivalDate like :tripArrivalDate',
       tripDepartureDate: 'trip.departureDate like :tripDepartureDate',
       cancelled: 'cancelled = :cancelled'
+    },
+    kmTravelled: {
+      ticketCancelled: 'ticketCancelled = :ticketCancelled',
+      autobusIsAsigned: 'autobusIsAsigned = :autobusIsAsigned'
     }
   };
 }

@@ -40,9 +40,9 @@ export class UtilsService {
         result = { ...result, ...aux };
         continue;
       }
-      const isCancelled: boolean = key === 'cancelled';
+      const isBoolean: boolean = Constants.BOOLEAN_FIELDS.includes(key);
       const aux: any = {};
-      aux[key] = this.methods[isCancelled.toString()](args[key]);
+      aux[key] = this.methods[isBoolean.toString()](args[key]);
       where = { ...where, ...aux };
     }
     if (Object.keys(where).length > 0) result.where = where;
