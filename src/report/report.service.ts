@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, FindManyOptions } from 'typeorm';
 import { Ticket } from '../ticket/entities/ticket.entity';
 import { UtilsService } from '../utils/utils.service';
+import { Trip } from '../trip/entities/trip.entity';
 
 @Injectable()
 export class ReportService {
@@ -38,5 +39,28 @@ export class ReportService {
     const whereString: string = this.utils.buildQuery(options.where, 'ticketSold');
     const queryBuilder = this.dataSource.createQueryBuilder();
     return await queryBuilder.select('SUM(ticket.price) AS "Facturacion "').from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').where(whereString, options.where).getRawMany();
+  }
+  async getPeopleTransported(options: FindManyOptions = {}): Promise<any> {
+    const whereString: string = this.utils.buildQuery(options.where, 'ticketSold');
+    const queryBuilder = this.dataSource.createQueryBuilder();
+    return await queryBuilder
+      .select('COUNT(*) AS "Personas Transportadas"')
+      .from((subQuery) => {
+        return subQuery.select(['trip.id AS idTrip', ' ticket.id AS idTicket', 'seat.id']).from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').innerJoin('ticket.seats', 'seat').where(whereString, options.where).distinct(true);
+      }, 'row')
+      .getRawMany();
+  }
+  async getNumberOfTrips(options: FindManyOptions = {}): Promise<any> {
+    const whereString: string = this.utils.buildQuery(options.where, 'ticketSold');
+    const queryBuilder = this.dataSource.createQueryBuilder();
+    return await queryBuilder
+      .select(['COUNT(*) AS "Veces que se repitio el Viaje"', 'origin.description AS Origen, destination.description AS Destino'])
+      .from(Trip, 'trip')
+      .innerJoin('trip.destination', 'destination')
+      .innerJoin('trip.origin', 'origin')
+      .groupBy('destination.id')
+      .addGroupBy('origin.id')
+      .where(whereString, options.where)
+      .getRawMany();
   }
 }
