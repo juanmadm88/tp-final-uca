@@ -120,4 +120,64 @@ describe('ReportService', () => {
     service = module.get<ReportService>(ReportService);
     await service.getNumberOfTrips();
   });
+  it('expect getPeopleTransported to be executed', async () => {
+    const mockedDataSource = {
+      createQueryBuilder: () => {
+        return {
+          select: () => {
+            return {
+              from: () => {
+                return {
+                  getRawMany: () => jest.fn()
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ReportService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+    }).compile();
+    service = module.get<ReportService>(ReportService);
+    await service.getPeopleTransported();
+  });
+  it('expect getKmTravelled to be executed', async () => {
+    const mockedDataSource = {
+      createQueryBuilder: () => {
+        return {
+          select: () => {
+            return {
+              from: () => {
+                return {
+                  groupBy: () => {
+                    return {
+                      skip: () => {
+                        return {
+                          take: () => {
+                            return {
+                              where: () => {
+                                return {
+                                  getRawMany: jest.fn()
+                                };
+                              }
+                            };
+                          }
+                        };
+                      }
+                    };
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ReportService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+    }).compile();
+    service = module.get<ReportService>(ReportService);
+    await service.getKmTravelled();
+  });
 });
