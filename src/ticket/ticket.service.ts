@@ -12,6 +12,7 @@ import { SeatType } from '../seat-type/entities/seat-type.entity';
 import { ConfigService } from '@nestjs/config';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { UtilsService } from '../utils/utils.service';
+import { UpdateSeatDTO } from '../autobus/dtos/update-seat.dto';
 
 @Injectable()
 export class TicketService {
@@ -99,6 +100,32 @@ export class TicketService {
         await queryRunner.commitTransaction();
         return;
       }
+      const seatsDTO: Array<UpdateSeatDTO> = dto.getSeats();
+      const ids: Array<number> = seatsDTO?.map((seat: UpdateSeatDTO) => {
+        return seat.getId();
+      });
+      const ticketDB: Ticket = await this.dataSource.getRepository(Ticket).createQueryBuilder('ticket').where('ticket.id = :id', { id }).innerJoinAndSelect('ticket.seats', 'seats').getOne();
+      for (const seatDB of ticketDB?.seats) {
+        if (!ids.includes(seatDB.id)) await queryRunner.manager.getRepository(Seat).update(seatDB.id, { booked: false });
+      }
+      const seatIdTicketDB: Array<number> = ticketDB.seats.map((seat: Seat) => {
+        return seat.id;
+      });
+      const seatsDB: Array<Seat> = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id IN (:...ids)', { ids }).innerJoinAndSelect('seat.seatType', 'seatType').getMany();
+      for (const seat of seatsDB) {
+        if (seat.booked && !seatIdTicketDB.includes(seat.id)) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
+        await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: true });
+      }
+      const updateTicketDb: Ticket = new Ticket();
+      updateTicketDb.seats = dto.getSeats()?.map((dto: UpdateSeatDTO) => {
+        const seat: Seat = new Seat();
+        seat.id = dto.getId();
+        return seat;
+      });
+      //TODO: VER COMO HACER PARA RECALCULAR EL PRECIO DEL TICKET, SE DEBERIA BANCAR QUE LE PASE UN NUEVO SERVICE TYPE
+      // Y SI NO TIENE QUE TOME EL DE LA BASE, PARA ESO HAY QUE JOINEAR EL TICKET CON EL TIPO SERVICIO
+      await queryRunner.manager.getRepository(Ticket).save({ id, ...updateTicketDb });
+      await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
