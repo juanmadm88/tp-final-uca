@@ -19,7 +19,7 @@ export class ReportService {
           .innerJoinAndSelect('ticket.trip', 'trip')
           .innerJoinAndSelect('trip.destination', 'destination')
           .innerJoinAndSelect('trip.origin', 'origin')
-          .innerJoinAndSelect('ticket.seats', 'seat')
+          .innerJoinAndSelect('ticket.seat', 'seat')
           .innerJoinAndSelect('seat.autobus', 'autobus')
           .innerJoinAndSelect('autobus.model', 'model')
           .distinct(true);
@@ -46,7 +46,7 @@ export class ReportService {
     return await queryBuilder
       .select('COUNT(*) AS "Personas Transportadas"')
       .from((subQuery) => {
-        return subQuery.select(['trip.id AS idTrip', ' ticket.id AS idTicket', 'seat.id']).from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').innerJoin('ticket.seats', 'seat').where(whereString, options.where).distinct(true);
+        return subQuery.select(['trip.id AS idTrip', ' ticket.id AS idTicket', 'seat.id']).from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').innerJoin('ticket.seat', 'seat').where(whereString, options.where).distinct(true);
       }, 'row')
       .getRawMany();
   }

@@ -4,13 +4,15 @@ import { IsBoolean, IsOptional, ValidateNested } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { UpdateSeatDTO } from '../../autobus/dtos/update-seat.dto';
+import { UpdateServiceTypeDTO } from '../../service-type/dtos/update-service-type.dto';
 
 export class UpdateTicketDTO {
   constructor(args: any) {
     if (args) {
-      const { cancelled, seats } = args;
+      const { cancelled, seat, serviceType } = args;
       if (cancelled) this.cancelled = cancelled;
-      if (seats) this.seats = seats;
+      if (seat) this.seat = seat;
+      if (serviceType) this.serviceType = serviceType;
     }
   }
   @ApiProperty({
@@ -25,22 +27,34 @@ export class UpdateTicketDTO {
   private cancelled?: boolean;
 
   @ApiProperty({
-    name: 'seats',
-    type: Array<UpdateSeatDTO>,
+    name: 'seat',
+    type: UpdateSeatDTO,
     required: false,
-    description: 'Array of seats to be updated '
+    description: 'Seat to be updated '
   })
   @IsOptional()
   @Expose()
   @ValidateNested()
   @Type(() => UpdateSeatDTO)
-  private seats?: Array<UpdateSeatDTO>;
+  private seat?: UpdateSeatDTO;
 
-  public getSeats(): Array<UpdateSeatDTO> {
-    return this.seats;
+  @ApiProperty({
+    name: 'serviceType',
+    type: UpdateServiceTypeDTO,
+    required: false,
+    description: 'Type Service to be updated '
+  })
+  @IsOptional()
+  @Expose()
+  @ValidateNested()
+  @Type(() => UpdateServiceTypeDTO)
+  private serviceType?: UpdateServiceTypeDTO;
+
+  public getSeat(): UpdateSeatDTO {
+    return this.seat;
   }
-  public setSeats(value: Array<UpdateSeatDTO>) {
-    return (this.seats = value);
+  public setSeat(value: UpdateSeatDTO) {
+    return (this.seat = value);
   }
 
   public getCancelled(): boolean {
@@ -48,5 +62,12 @@ export class UpdateTicketDTO {
   }
   public setCancelled(value: boolean) {
     return (this.cancelled = value);
+  }
+
+  public getServiceType(): UpdateServiceTypeDTO {
+    return this.serviceType;
+  }
+  public setServiceType(value: UpdateServiceTypeDTO) {
+    return (this.serviceType = value);
   }
 }

@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNumber, IsNotEmpty, IsBoolean } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsBoolean, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 /* istanbul ignore file */
@@ -32,9 +32,9 @@ export class CreateSeatDTO {
     default: false
   })
   @Expose()
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  private booked: boolean;
+  private booked?: boolean;
 
   public getId(): number {
     return this.id;

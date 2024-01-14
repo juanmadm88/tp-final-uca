@@ -55,12 +55,9 @@ describe('TripService', () => {
   });
   it('expect update method to be successfully executed ', async () => {
     const ticket: Ticket = new Ticket();
-    const firstSeat: Seat = new Seat();
-    const secondSeat: Seat = new Seat();
-    secondSeat.booked = true;
-    ticket.seats = [];
-    ticket.seats.push(firstSeat);
-    ticket.seats.push(secondSeat);
+    const seat: Seat = new Seat();
+    seat.booked = true;
+    ticket.seat = seat;
     const mockedConfigService = {
       get: jest.fn((key: string) => {
         if (key === 'appConfig.pricesConfig') {
@@ -124,9 +121,7 @@ describe('TripService', () => {
     const firstSeat: Seat = new Seat();
     const secondSeat: Seat = new Seat();
     secondSeat.booked = true;
-    ticket.seats = [];
-    ticket.seats.push(firstSeat);
-    ticket.seats.push(secondSeat);
+    ticket.seat = firstSeat;
     const mockedConfigService = {
       get: jest.fn((key: string) => {
         if (key === 'appConfig.pricesConfig') {
@@ -189,11 +184,10 @@ describe('TripService', () => {
       expect(error).toBeDefined();
     }
   });
-  it('expect create method return a Bad Request Error when trying to booked reserved seats in another ticket', async () => {
-    const firstSeat: Seat = new Seat();
+  it('expect create method return a Bad Request Error when trying to booked reserved seat in another ticket', async () => {
     const secondSeat: Seat = new Seat();
     secondSeat.booked = true;
-    const seats = [firstSeat, secondSeat];
+    const seat = secondSeat;
     const mockedConfigService = {
       get: jest.fn((key: string) => {
         if (key === 'appConfig.pricesConfig') {
@@ -230,7 +224,7 @@ describe('TripService', () => {
                 return {
                   innerJoinAndSelect: () => {
                     return {
-                      getMany: () => seats
+                      getOne: () => seat
                     };
                   },
                   getOne: () => jest.fn()
@@ -249,7 +243,7 @@ describe('TripService', () => {
     try {
       await service.create(
         plainToInstance(TicketDTO, {
-          seats: [{ id: 1 }, { id: 2 }],
+          seat: { id: 1 },
           serviceType: {
             id: 2
           }
@@ -261,10 +255,9 @@ describe('TripService', () => {
     }
   });
   it('expect an error when create method fails ', async () => {
-    const firstSeat: Seat = new Seat();
     const secondSeat: Seat = new Seat();
     secondSeat.booked = false;
-    const seats = [firstSeat, secondSeat];
+    const seat = secondSeat;
     const mockedConfigService = {
       get: jest.fn((key: string) => {
         if (key === 'appConfig.pricesConfig') {
@@ -327,7 +320,7 @@ describe('TripService', () => {
                   getOne: jest.fn(),
                   innerJoinAndSelect: () => {
                     return {
-                      getMany: () => seats
+                      getOne: () => seat
                     };
                   }
                 };
@@ -345,7 +338,7 @@ describe('TripService', () => {
     try {
       await service.create(
         plainToInstance(TicketDTO, {
-          seats: [{ id: 1 }, { id: 2 }],
+          seat: { id: 1 },
           serviceType: {
             id: 2
           },
@@ -366,13 +359,10 @@ describe('TripService', () => {
     secondSeat.seatType = new SeatType();
     secondSeat.seatType.description = 'asiento cama';
     firstSeat.seatType.description = 'asiento cama';
-    const seats = [firstSeat, secondSeat];
+    const seat = firstSeat;
     const trip = {
       autobus: {
-        seats: [
-          { id: 1, booked: true },
-          { id: 2, booked: true }
-        ],
+        seats: [{ id: 2, booked: true }],
         model: {
           description: 'doble piso'
         }
@@ -446,7 +436,7 @@ describe('TripService', () => {
                   getOne: () => Promise.resolve({ description: 'primera clase' }),
                   innerJoinAndSelect: () => {
                     return {
-                      getMany: () => seats
+                      getOne: () => seat
                     };
                   }
                 };
@@ -463,10 +453,7 @@ describe('TripService', () => {
     expect(service).toBeDefined();
     await service.create(
       plainToInstance(TicketDTO, {
-        seats: [
-          { id: 1, booked: true },
-          { id: 2, booked: true }
-        ],
+        seat: { id: 2, booked: true },
         serviceType: {
           id: 2
         },

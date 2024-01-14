@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { Trip } from '../../trip/entities/trip.entity';
 import { ServiceType } from '../../service-type/entities/service-type.entity';
@@ -15,13 +15,9 @@ export class Ticket {
   @Column({ type: Boolean, default: false })
   cancelled: boolean;
 
-  @ManyToMany(() => Seat)
-  @JoinTable({
-    name: 'tickets_seats',
-    joinColumn: { name: 'id_ticket' },
-    inverseJoinColumn: { name: 'id_seat' }
-  })
-  seats: Array<Seat>;
+  @ManyToOne(() => Seat, { cascade: ['update'] })
+  @JoinColumn({ name: 'id_seat', referencedColumnName: 'id' })
+  seat: Seat;
 
   @OneToOne(() => User, {
     eager: true

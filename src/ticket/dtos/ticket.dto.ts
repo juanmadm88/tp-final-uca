@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, IsNumber, IsNotEmptyObject, ValidateNested, IsArray, IsBoolean } from 'class-validator';
+import { IsOptional, IsNumber, IsNotEmptyObject, ValidateNested, IsBoolean } from 'class-validator';
 import { CreateUserDTO } from './create-user.dto';
 import { CreateTripDTO } from './create-trip.dto';
 import { CreateSeatDTO } from './create-seat.dto';
@@ -11,11 +11,11 @@ import { CreateServiceTypeDTO } from './create-service-type.dto';
 export class TicketDTO {
   constructor(args: any) {
     if (args) {
-      const { price, id, user, seats, trip, serviceType, cancelled } = args;
+      const { price, id, user, seat, trip, serviceType, cancelled } = args;
       if (id) this.id = id;
       if (price) this.price = price;
       if (user) this.user = user;
-      if (seats) this.seats = seats;
+      if (seat) this.seat = seat;
       if (trip) this.trip = trip;
       if (serviceType) this.serviceType = serviceType;
       if (cancelled) this.cancelled = cancelled;
@@ -81,16 +81,16 @@ export class TicketDTO {
   private id?: number;
 
   @ApiProperty({
-    name: 'seats',
-    type: Array<CreateSeatDTO>,
+    name: 'seat',
+    type: CreateSeatDTO,
     required: true,
-    description: 'An Array of seats '
+    description: 'A seat '
   })
   @Expose()
-  @IsArray()
+  @IsNotEmptyObject()
   @ValidateNested()
   @Type(() => CreateSeatDTO)
-  private seats: Array<CreateSeatDTO>;
+  private seat: CreateSeatDTO;
 
   @ApiProperty({
     name: 'serviceType',
@@ -122,11 +122,11 @@ export class TicketDTO {
   public setTrip(value: CreateTripDTO) {
     this.trip = value;
   }
-  public getSeats(): Array<CreateSeatDTO> {
-    return this.seats;
+  public getSeat(): CreateSeatDTO {
+    return this.seat;
   }
-  public setSeats(value: Array<CreateSeatDTO>) {
-    this.seats = value;
+  public setSeat(value: CreateSeatDTO) {
+    this.seat = value;
   }
   public getPrice(): number {
     return this.price;

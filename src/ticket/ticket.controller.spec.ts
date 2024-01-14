@@ -52,16 +52,10 @@ describe('TicketController', () => {
       serviceType: {
         id: 23
       },
-      seats: [
-        {
-          id: 31,
-          booked: true
-        },
-        {
-          id: 32,
-          booked: true
-        }
-      ]
+      seat: {
+        id: 31,
+        booked: true
+      }
     });
     await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
     expect(spy).toBeCalledTimes(1);
@@ -78,16 +72,10 @@ describe('TicketController', () => {
       serviceType: {
         id: 23
       },
-      seats: [
-        {
-          id: 31,
-          booked: true
-        },
-        {
-          id: 32,
-          booked: true
-        }
-      ]
+      seat: {
+        id: 31,
+        booked: true
+      }
     });
     try {
       await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
@@ -107,16 +95,10 @@ describe('TicketController', () => {
       serviceType: {
         id: 23
       },
-      seats: [
-        {
-          id: 31,
-          booked: true
-        },
-        {
-          id: 32,
-          booked: true
-        }
-      ]
+      seat: {
+        id: 31,
+        booked: true
+      }
     });
     await controller.update(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 17);
     expect(spy).toBeCalledTimes(1);
@@ -133,16 +115,10 @@ describe('TicketController', () => {
       serviceType: {
         id: 23
       },
-      seats: [
-        {
-          id: 31,
-          booked: true
-        },
-        {
-          id: 32,
-          booked: true
-        }
-      ]
+      seat: {
+        id: 31,
+        booked: true
+      }
     });
     try {
       await controller.update(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 17);

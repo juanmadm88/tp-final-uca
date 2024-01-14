@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { UtilsService } from '../utils/utils.service';
 import { UpdateSeatDTO } from '../autobus/dtos/update-seat.dto';
+import { UpdateServiceTypeDTO } from '../service-type/dtos/update-service-type.dto';
 
 @Injectable()
 export class TicketService {
@@ -22,18 +23,13 @@ export class TicketService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const seatTypes: Array<SeatType> = [];
-      const seats: Array<CreateSeatDTO> = dto.getSeats();
-      const ids: Array<number> = seats.map((seat: CreateSeatDTO) => {
-        return seat.getId();
-      });
-      const seatsDB: Array<Seat> = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id IN (:...ids)', { ids }).innerJoinAndSelect('seat.seatType', 'seatType').getMany();
+      const seat: CreateSeatDTO = dto.getSeat();
+      const id: number = seat.getId();
+      const seatDB: Seat = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id = :id', { id }).innerJoinAndSelect('seat.seatType', 'seatType').getOne();
       const serviceTypeDB: ServiceType = await this.dataSource.getRepository(ServiceType).createQueryBuilder('type').where('type.id = :id', { id: dto.getServiceType().getId() }).getOne();
-      for (const seat of seatsDB) {
-        seatTypes.push(seat.seatType);
-        if (seat.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
-        await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: true });
-      }
+      const seatType: SeatType = seatDB.seatType;
+      if (seatDB.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
+      await queryRunner.manager.getRepository(Seat).update(seatDB.id, { booked: true });
       const trip: Trip = await this.dataSource
         .getRepository(Trip)
         .createQueryBuilder('trip')
@@ -46,7 +42,7 @@ export class TicketService {
         .getOne();
       const numberOfSeats: number = trip.autobus.seats.length;
       const kilometers: number = Math.abs(trip.destination.kilometer - trip.origin.kilometer);
-      await queryRunner.manager.save(this.buildTicketEntity(dto, this.buildPrice({ serviceType: serviceTypeDB, kilometers, seatTypes, autobusModel: trip.autobus.model, numberOfSeats })));
+      await queryRunner.manager.save(this.buildTicketEntity(dto, this.buildPrice({ serviceType: serviceTypeDB, kilometers, seatType, autobusModel: trip.autobus.model, numberOfSeats })));
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -64,67 +60,84 @@ export class TicketService {
     ticket.user.id = dto.getUser().getId();
     ticket.trip = new Trip();
     ticket.trip.id = dto.getTrip().getId();
-    ticket.seats = dto.getSeats().map((dto: CreateSeatDTO) => {
-      const seat: Seat = new Seat();
-      seat.id = dto.getId();
-      if ('booked' in dto && dto.getBooked() != undefined) seat.booked = dto.getBooked();
-      return seat;
-    });
+    const seatDto: CreateSeatDTO = dto.getSeat();
+    ticket.seat = new Seat();
+    ticket.seat.id = seatDto.getId();
+    if ('booked' in seatDto && seatDto.getBooked() != undefined) ticket.seat.booked = seatDto.getBooked();
     return ticket;
   }
   private buildPrice(args: any): number {
-    const { serviceType, kilometers, seatTypes, autobusModel, numberOfSeats } = args;
+    const { serviceType, kilometers, seatType, autobusModel, numberOfSeats } = args;
     const costs: any = this.configService.get<object>('appConfig.pricesConfig');
     const { fuelCostPerLt, seatTypeCost, fuelPerKm, serviceTypeCost } = costs;
     let seatCosts: any = 0;
-    seatTypes.forEach((element: any) => {
-      seatCosts += seatTypeCost[element.description];
-    });
+    seatCosts += seatTypeCost[seatType.description];
     const price: number = (fuelCostPerLt * fuelPerKm[autobusModel.description.toLowerCase()] * kilometers) / numberOfSeats + serviceTypeCost[serviceType.description.toLowerCase()] + seatCosts;
     return price;
   }
 
-  async update(id: number, dto: UpdateTicketDTO): Promise<any> {
+  //  TODO: QUE PASA SI CUANDO ACTUALIZA EL TIPO DE SERVICIO O EL ASIENTO, EL USUARIO TIENE SALDO A FAVOR
+  //O DEBE PLATA
+  async update(idTicket: number, dto: UpdateTicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
       const isCancelled: boolean = dto.getCancelled();
       if (isCancelled) {
-        await queryRunner.manager.getRepository(Ticket).update(id, { cancelled: isCancelled });
-        const ticket: Ticket = await this.dataSource.getRepository(Ticket).createQueryBuilder('ticket').where('ticket.id = :id', { id }).innerJoinAndSelect('ticket.seats', 'seats').getOne();
-        const seats: Array<Seat> = ticket.seats;
-        for (const seat of seats) {
-          if (seat.booked) await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: false });
-        }
+        await queryRunner.manager.getRepository(Ticket).update(idTicket, { cancelled: isCancelled });
+        const ticket: Ticket = await this.dataSource.getRepository(Ticket).createQueryBuilder('ticket').where('ticket.id = :id', { id: idTicket }).innerJoinAndSelect('ticket.seat', 'seat').getOne();
+        const seat: Seat = ticket.seat;
+        if (seat.booked) await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: false });
         await queryRunner.commitTransaction();
         return;
       }
-      const seatsDTO: Array<UpdateSeatDTO> = dto.getSeats();
-      const ids: Array<number> = seatsDTO?.map((seat: UpdateSeatDTO) => {
-        return seat.getId();
-      });
-      const ticketDB: Ticket = await this.dataSource.getRepository(Ticket).createQueryBuilder('ticket').where('ticket.id = :id', { id }).innerJoinAndSelect('ticket.seats', 'seats').getOne();
-      for (const seatDB of ticketDB?.seats) {
-        if (!ids.includes(seatDB.id)) await queryRunner.manager.getRepository(Seat).update(seatDB.id, { booked: false });
+      const seatDTO: UpdateSeatDTO = dto.getSeat();
+      const serviceTypeDTO: UpdateServiceTypeDTO = dto.getServiceType();
+      if (seatDTO || serviceTypeDTO) {
+        let serviceTypeDB: ServiceType;
+        let seatTypeDB: SeatType;
+        const ticketDB: Ticket = await this.dataSource
+          .getRepository(Ticket)
+          .createQueryBuilder('ticket')
+          .where('ticket.id = :id', { id: idTicket })
+          .innerJoinAndSelect('ticket.seat', 'seat')
+          .innerJoinAndSelect('ticket.serviceType', 'serviceType')
+          .innerJoinAndSelect('seat.seatType', 'seatType')
+          .innerJoinAndSelect('ticket.trip', 'trip')
+          .getOne();
+        const seatDB: Seat = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id = :id', { id: seatDTO.getId() }).innerJoinAndSelect('seat.seatType', 'seatType').getOne();
+        const updateTicketDb: Ticket = new Ticket();
+        if (seatDTO && seatDTO.getId() != ticketDB.seat.id && seatDB.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
+        if (seatDTO && seatDTO.getId() != ticketDB.seat.id) {
+          seatTypeDB = seatDB.seatType;
+          updateTicketDb.seat = new Seat();
+          updateTicketDb.seat.id = seatDTO.getId();
+          updateTicketDb.seat.booked = true;
+          await queryRunner.manager.getRepository(Seat).update(ticketDB.seat.id, { booked: false });
+        }
+        if (serviceTypeDTO && serviceTypeDTO.getId() != ticketDB.serviceType.id) {
+          serviceTypeDB = await this.dataSource.getRepository(ServiceType).createQueryBuilder('serviceType').where('serviceType.id = :id', { id: serviceTypeDTO.getId() }).getOne();
+          updateTicketDb.serviceType = new ServiceType();
+          updateTicketDb.serviceType.id = serviceTypeDTO.getId();
+        }
+        serviceTypeDB = serviceTypeDB || ticketDB.serviceType;
+        seatTypeDB = seatTypeDB || ticketDB.seat.seatType;
+        const trip: Trip = await this.dataSource
+          .getRepository(Trip)
+          .createQueryBuilder('trip')
+          .innerJoinAndSelect('trip.destination', 'destination')
+          .innerJoinAndSelect('trip.origin', 'origin')
+          .innerJoinAndSelect('trip.autobus', 'autobus')
+          .innerJoinAndSelect('autobus.model', 'model')
+          .innerJoinAndSelect('autobus.seats', 'seats')
+          .where('trip.id = :id', { id: ticketDB.trip.id })
+          .getOne();
+        const numberOfSeats: number = trip.autobus.seats.length;
+        const kilometers: number = Math.abs(trip.destination.kilometer - trip.origin.kilometer);
+        updateTicketDb.price = this.buildPrice({ serviceType: serviceTypeDB, kilometers, seatType: seatTypeDB, autobusModel: trip.autobus.model, numberOfSeats });
+        await queryRunner.manager.getRepository(Ticket).save({ id: idTicket, ...updateTicketDb });
       }
-      const seatIdTicketDB: Array<number> = ticketDB.seats.map((seat: Seat) => {
-        return seat.id;
-      });
-      const seatsDB: Array<Seat> = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id IN (:...ids)', { ids }).innerJoinAndSelect('seat.seatType', 'seatType').getMany();
-      for (const seat of seatsDB) {
-        if (seat.booked && !seatIdTicketDB.includes(seat.id)) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
-        await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: true });
-      }
-      const updateTicketDb: Ticket = new Ticket();
-      updateTicketDb.seats = dto.getSeats()?.map((dto: UpdateSeatDTO) => {
-        const seat: Seat = new Seat();
-        seat.id = dto.getId();
-        return seat;
-      });
-      //TODO: VER COMO HACER PARA RECALCULAR EL PRECIO DEL TICKET, SE DEBERIA BANCAR QUE LE PASE UN NUEVO SERVICE TYPE
-      // Y SI NO TIENE QUE TOME EL DE LA BASE, PARA ESO HAY QUE JOINEAR EL TICKET CON EL TIPO SERVICIO
-      await queryRunner.manager.getRepository(Ticket).save({ id, ...updateTicketDb });
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -143,7 +156,7 @@ export class TicketService {
       .innerJoinAndSelect('ticket.trip', 'trip')
       .innerJoinAndSelect('trip.destination', 'tripDestination')
       .innerJoinAndSelect('trip.origin', 'tripOrigin')
-      .innerJoinAndSelect('ticket.seats', 'seats')
+      .innerJoinAndSelect('ticket.seat', 'seat')
       .where(where, options.where)
       .skip(options.skip)
       .take(options.take)
