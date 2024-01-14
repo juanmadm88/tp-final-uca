@@ -76,8 +76,6 @@ export class TicketService {
     return price;
   }
 
-  //  TODO: QUE PASA SI CUANDO ACTUALIZA EL TIPO DE SERVICIO O EL ASIENTO, EL USUARIO TIENE SALDO A FAVOR
-  //O DEBE PLATA
   async update(idTicket: number, dto: UpdateTicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -126,12 +124,12 @@ export class TicketService {
         const trip: Trip = await this.dataSource
           .getRepository(Trip)
           .createQueryBuilder('trip')
+          .where('trip.id = :id', { id: ticketDB.trip.id })
           .innerJoinAndSelect('trip.destination', 'destination')
           .innerJoinAndSelect('trip.origin', 'origin')
           .innerJoinAndSelect('trip.autobus', 'autobus')
           .innerJoinAndSelect('autobus.model', 'model')
           .innerJoinAndSelect('autobus.seats', 'seats')
-          .where('trip.id = :id', { id: ticketDB.trip.id })
           .getOne();
         const numberOfSeats: number = trip.autobus.seats.length;
         const kilometers: number = Math.abs(trip.destination.kilometer - trip.origin.kilometer);
