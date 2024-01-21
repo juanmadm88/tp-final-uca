@@ -38,7 +38,7 @@ export class ReportService {
   async getBilling(options: FindManyOptions = {}): Promise<any> {
     const whereString: string = this.utils.buildQuery(options.where, 'ticketSold');
     const queryBuilder = this.dataSource.createQueryBuilder();
-    return await queryBuilder.select('SUM(ticket.price) AS "Facturacion "').from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').where(whereString, options.where).getRawMany();
+    return await queryBuilder.select('COALESCE(SUM(ticket.price),0) AS "Facturacion "').from(Ticket, 'ticket').innerJoin('ticket.trip', 'trip').where(whereString, options.where).getRawMany();
   }
   async getPeopleTransported(options: FindManyOptions = {}): Promise<any> {
     const whereString: string = this.utils.buildQuery(options.where, 'ticketSold');
