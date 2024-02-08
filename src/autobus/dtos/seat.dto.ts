@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmptyObject, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNotEmptyObject, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
 import { SeatTypeDTO } from './seat-type.dto';
 import { ApiProperty } from '@nestjs/swagger';
@@ -7,10 +7,12 @@ import { ApiProperty } from '@nestjs/swagger';
 export class SeatDTO {
   constructor(args: any) {
     if (args) {
-      const { seatType, id, booked } = args;
+      const { seatType, id, booked, row, column } = args;
       if (id) this.id = id;
       if (seatType) this.seatType = seatType;
       if (booked) this.booked = booked;
+      if (row) this.row = row;
+      if (column) this.column = column;
     }
   }
   @ApiProperty({
@@ -48,6 +50,28 @@ export class SeatDTO {
   @IsBoolean()
   private booked?: boolean;
 
+  @ApiProperty({
+    name: 'row',
+    type: 'number',
+    required: true,
+    description: 'The Seat row'
+  })
+  @Expose()
+  @IsNotEmpty()
+  @IsNumber()
+  private row: number;
+
+  @ApiProperty({
+    name: 'column',
+    type: 'number',
+    required: true,
+    description: 'The Seat column'
+  })
+  @Expose()
+  @IsNotEmpty()
+  @IsNumber()
+  private column: number;
+
   public getSeatType(): SeatTypeDTO {
     return this.seatType;
   }
@@ -65,5 +89,17 @@ export class SeatDTO {
   }
   public setBooked(value: boolean) {
     this.booked = value;
+  }
+  public getColumn(): number {
+    return this.column;
+  }
+  public setColumn(column: number) {
+    this.column = column;
+  }
+  public getRow(): number {
+    return this.row;
+  }
+  public setRow(row: number) {
+    this.row = row;
   }
 }

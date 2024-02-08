@@ -16,6 +16,12 @@ export class Seat {
   @Column({ type: Boolean, default: false })
   booked: boolean;
 
+  @Column({ type: 'int' })
+  row: number;
+
+  @Column({ type: 'int' })
+  column: number;
+
   @ManyToOne(() => Autobus)
   @JoinColumn({ name: 'id_autobus', referencedColumnName: 'id' })
   autobus: Autobus;

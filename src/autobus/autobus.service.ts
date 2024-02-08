@@ -48,6 +48,8 @@ export class AutobusService {
     if (dto.getSeats()) {
       const seatArray: Array<Seat> = dto.getSeats().map((seatDTO: SeatDTO) => {
         const seat: Seat = new Seat();
+        seat.row = seatDTO.getRow();
+        seat.column = seatDTO.getColumn();
         if (seatDTO.getSeatType()) {
           const dto: SeatTypeDTO = seatDTO.getSeatType();
           const seatType: SeatType = new SeatType();
