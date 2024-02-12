@@ -101,8 +101,7 @@ export class TicketService {
         const ticket: Ticket = await this.dataSource.getRepository(Ticket).createQueryBuilder('ticket').where('ticket.id = :id', { id: idTicket }).innerJoinAndSelect('ticket.seat', 'seat').getOne();
         const seat: Seat = ticket.seat;
         if (seat.booked) await queryRunner.manager.getRepository(Seat).update(seat.id, { booked: false });
-        await queryRunner.commitTransaction();
-        return;
+        return await queryRunner.commitTransaction();
       }
       const seatDTO: UpdateSeatDTO = dto.getSeat();
       const serviceTypeDTO: UpdateServiceTypeDTO = dto.getServiceType();
