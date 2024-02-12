@@ -22,9 +22,9 @@ export class TicketService {
   //TODO: HACER QUE SE BANQUE PASAR UN ARRAY DE TICKETS, PARA QUE PUEDA COMPRAR MAS DE 1 PASAJE POR USUARIO
   async create(dto: TicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       const seat: CreateSeatDTO = dto.getSeat();
       const id: number = seat.getId();
       const seatDB: Seat = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id = :id', { id }).innerJoinAndSelect('seat.seatType', 'seatType').getOne();
@@ -92,9 +92,9 @@ export class TicketService {
   //TODO: PROBAR ESTO PORQUE MODIFIQUE LA FUNCION QUE CALCULA LOS COSTOS
   async update(idTicket: number, dto: UpdateTicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       const isCancelled: boolean = dto.getCancelled();
       if (isCancelled) {
         await queryRunner.manager.getRepository(Ticket).update(idTicket, { cancelled: isCancelled });
