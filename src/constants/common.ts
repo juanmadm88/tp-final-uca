@@ -1,3 +1,5 @@
+import { Model } from '../model/entities/model.entity';
+
 export interface QueryParams {
   skip?: number;
   size?: number;
@@ -16,4 +18,10 @@ export interface QueryParamsTrip extends QueryParams {
   destinationDescription?: string;
   originDescription?: string;
   departureDate?: string;
+}
+
+export interface TripParameters {
+  numberOfSeats: number;
+  kilometers: number;
+  autobusModel: Model;
 }

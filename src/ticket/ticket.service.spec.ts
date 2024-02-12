@@ -631,8 +631,9 @@ describe('TripService', () => {
         };
       }
     };
-    const mockedWhere = {
-      where: jest.fn()
+    const mockedGetRepository = {
+      update: jest.fn(),
+      createQueryBuilder: jest.fn()
     };
     const mockedDataSource = {
       createQueryRunner: () => {
@@ -646,19 +647,14 @@ describe('TripService', () => {
         };
       },
       getRepository: () => {
-        return {
-          update: jest.fn(),
-          createQueryBuilder: () => {
-            return mockedWhere;
-          }
-        };
+        return mockedGetRepository;
       }
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
+    jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
       return {
         innerJoinAndSelect: () => {
           return {
@@ -668,19 +664,23 @@ describe('TripService', () => {
                   return {
                     innerJoinAndSelect: () => {
                       return {
-                        getOne: () =>
-                          Promise.resolve({
-                            seat: {
-                              id: 2
-                            },
-                            serviceType: {
-                              id: 1,
-                              description: 'primera clase'
-                            },
-                            trip: {
-                              id: 1
-                            }
-                          })
+                        where: () => {
+                          return {
+                            getOne: () =>
+                              Promise.resolve({
+                                seat: {
+                                  id: 2
+                                },
+                                serviceType: {
+                                  id: 1,
+                                  description: 'primera clase'
+                                },
+                                trip: {
+                                  id: 1
+                                }
+                              })
+                          };
+                        }
                       };
                     }
                   };
@@ -691,30 +691,38 @@ describe('TripService', () => {
         }
       };
     });
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
+    jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
       return {
         innerJoinAndSelect: () => {
           return {
+            where: () => {
+              return {
+                getOne: () =>
+                  Promise.resolve({
+                    booked: false,
+                    seatType: {
+                      description: 'asiento cama'
+                    }
+                  })
+              };
+            }
+          };
+        }
+      };
+    });
+    jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
+      return {
+        where: () => {
+          return {
             getOne: () =>
               Promise.resolve({
-                booked: false,
-                seatType: {
-                  description: 'asiento cama'
-                }
+                description: 'primera clase'
               })
           };
         }
       };
     });
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
-      return {
-        getOne: () =>
-          Promise.resolve({
-            description: 'primera clase'
-          })
-      };
-    });
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
+    jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
       return {
         innerJoinAndSelect: () => {
           return {
@@ -726,21 +734,25 @@ describe('TripService', () => {
                       return {
                         innerJoinAndSelect: () => {
                           return {
-                            getOne: () =>
-                              Promise.resolve({
-                                autobus: {
-                                  seats: [{ id: 1 }, { id: 2 }],
-                                  model: {
-                                    description: 'piso simple'
-                                  }
-                                },
-                                destination: {
-                                  kilometer: 100
-                                },
-                                origin: {
-                                  kilometer: 200
-                                }
-                              })
+                            where: () => {
+                              return {
+                                getOne: () =>
+                                  Promise.resolve({
+                                    autobus: {
+                                      seats: [{ id: 1 }, { id: 2 }],
+                                      model: {
+                                        description: 'piso simple'
+                                      }
+                                    },
+                                    destination: {
+                                      kilometer: 100
+                                    },
+                                    origin: {
+                                      kilometer: 200
+                                    }
+                                  })
+                              };
+                            }
                           };
                         }
                       };
@@ -787,8 +799,9 @@ describe('TripService', () => {
         };
       }
     };
-    const mockedWhere = {
-      where: jest.fn()
+    const mockedGetRepository = {
+      update: jest.fn(),
+      createQueryBuilder: jest.fn()
     };
     const mockedDataSource = {
       createQueryRunner: () => {
@@ -802,19 +815,14 @@ describe('TripService', () => {
         };
       },
       getRepository: () => {
-        return {
-          update: jest.fn(),
-          createQueryBuilder: () => {
-            return mockedWhere;
-          }
-        };
+        return mockedGetRepository;
       }
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
+    jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
       return {
         innerJoinAndSelect: () => {
           return {
@@ -824,19 +832,23 @@ describe('TripService', () => {
                   return {
                     innerJoinAndSelect: () => {
                       return {
-                        getOne: () =>
-                          Promise.resolve({
-                            seat: {
-                              id: 2
-                            },
-                            serviceType: {
-                              id: 1,
-                              description: 'primera clase'
-                            },
-                            trip: {
-                              id: 1
-                            }
-                          })
+                        where: () => {
+                          return {
+                            getOne: () =>
+                              Promise.resolve({
+                                seat: {
+                                  id: 2
+                                },
+                                serviceType: {
+                                  id: 1,
+                                  description: 'primera clase'
+                                },
+                                trip: {
+                                  id: 1
+                                }
+                              })
+                          };
+                        }
                       };
                     }
                   };
@@ -847,62 +859,19 @@ describe('TripService', () => {
         }
       };
     });
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
+    jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
       return {
         innerJoinAndSelect: () => {
           return {
-            getOne: () =>
-              Promise.resolve({
-                booked: true,
-                seatType: {
-                  description: 'asiento cama'
-                }
-              })
-          };
-        }
-      };
-    });
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
-      return {
-        getOne: () =>
-          Promise.resolve({
-            description: 'primera clase'
-          })
-      };
-    });
-    jest.spyOn(mockedWhere, 'where').mockImplementationOnce(() => {
-      return {
-        innerJoinAndSelect: () => {
-          return {
-            innerJoinAndSelect: () => {
+            where: () => {
               return {
-                innerJoinAndSelect: () => {
-                  return {
-                    innerJoinAndSelect: () => {
-                      return {
-                        innerJoinAndSelect: () => {
-                          return {
-                            getOne: () =>
-                              Promise.resolve({
-                                autobus: {
-                                  seats: [{ id: 1 }, { id: 2 }],
-                                  model: {
-                                    description: 'piso simple'
-                                  }
-                                },
-                                destination: {
-                                  kilometer: 100
-                                },
-                                origin: {
-                                  kilometer: 200
-                                }
-                              })
-                          };
-                        }
-                      };
+                getOne: () =>
+                  Promise.resolve({
+                    booked: true,
+                    seatType: {
+                      description: 'asiento cama'
                     }
-                  };
-                }
+                  })
               };
             }
           };
