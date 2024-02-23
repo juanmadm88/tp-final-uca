@@ -7,12 +7,14 @@ import { AuthGuard } from '../authentication/auth.guard';
 import { TicketDTO } from './dtos/ticket.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
+import { TicketsDTO } from './dtos/tickets.dto';
 describe('TicketController', () => {
   let controller: TicketController;
   const mockedService = {
     create: jest.fn(),
     update: jest.fn(),
-    findAll: jest.fn()
+    findAll: jest.fn(),
+    bulkCreate: jest.fn()
   };
   const mockedAuthGuard = {
     canActivate: jest.fn()
@@ -144,8 +146,58 @@ describe('TicketController', () => {
       expect(error).toBeDefined();
     }
   });
-  it('expect get method to be successfully executed ', async () => {
+  it('expect findAll method to be successfully executed ', async () => {
     jest.spyOn(mockedService, 'findAll').mockImplementation(() => Promise.resolve());
     await controller.get('9568be23-16c6-4d87-8dd0-614b34a6c830', undefined);
+  });
+  it('expect an Error when bulkCreate service method fails', async () => {
+    jest.spyOn(mockedService, 'bulkCreate').mockImplementation(() => Promise.reject({ status: 404 }));
+    try {
+      const dto: TicketsDTO = plainToInstance(TicketsDTO, {
+        tickets: [
+          {
+            user: {
+              id: 17
+            },
+            trip: {
+              id: 5
+            },
+            serviceType: {
+              id: 23
+            },
+            seat: {
+              id: 31,
+              booked: true
+            }
+          }
+        ]
+      });
+      await controller.bulkCreate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect bulkCreate method to be successfully executed ', async () => {
+    jest.spyOn(mockedService, 'bulkCreate').mockImplementation(() => Promise.resolve());
+    const dto: TicketsDTO = plainToInstance(TicketsDTO, {
+      tickets: [
+        {
+          user: {
+            id: 17
+          },
+          trip: {
+            id: 5
+          },
+          serviceType: {
+            id: 23
+          },
+          seat: {
+            id: 31,
+            booked: true
+          }
+        }
+      ]
+    });
+    await controller.bulkCreate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
   });
 });

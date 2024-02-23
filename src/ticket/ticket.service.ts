@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TicketDTO } from './dtos/ticket.dto';
-import { DataSource, FindManyOptions } from 'typeorm';
+import { DataSource, FindManyOptions, QueryRunner } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { ServiceType } from '../service-type/entities/service-type.entity';
 import { User } from '../user/entities/user.entity';
@@ -19,12 +19,13 @@ import { TripParameters } from '../constants/common';
 @Injectable()
 export class TicketService {
   constructor(private dataSource: DataSource, private configService: ConfigService, private utils: UtilsService) {}
-  //TODO: HACER QUE SE BANQUE PASAR UN ARRAY DE TICKETS, PARA QUE PUEDA COMPRAR MAS DE 1 PASAJE POR USUARIO
-  async create(dto: TicketDTO): Promise<any> {
-    const queryRunner = this.dataSource.createQueryRunner();
+  async create(dto: TicketDTO, query?: QueryRunner): Promise<any> {
+    const queryRunner = query ? query : this.dataSource.createQueryRunner();
     try {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
+      if (!query) {
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+      }
       const seat: CreateSeatDTO = dto.getSeat();
       const id: number = seat.getId();
       const seatDB: Seat = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').where('seat.id = :id', { id }).innerJoinAndSelect('seat.seatType', 'seatType').getOne();
@@ -34,12 +35,12 @@ export class TicketService {
       await queryRunner.manager.getRepository(Seat).update(seatDB.id, { booked: true });
       const price: number = await this.calculateTotalPrice(dto, { serviceTypeDB, seatType });
       await queryRunner.manager.save(this.buildTicketEntity(dto, price));
-      await queryRunner.commitTransaction();
+      if (!query) await queryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (!query) await queryRunner.rollbackTransaction();
       throw error;
     } finally {
-      await queryRunner.release();
+      if (!query) await queryRunner.release();
     }
   }
   private async calculateTotalPrice(dto: TicketDTO, parameters: any): Promise<number> {
@@ -163,5 +164,23 @@ export class TicketService {
       .take(options.take)
       .getMany();
     return this.utils.buildDTO(tickets, TicketDTO);
+  }
+  async bulkCreate(tickets: Array<TicketDTO>): Promise<any> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const promises: Array<Promise<any>> = [];
+      tickets.forEach((ticket: TicketDTO) => {
+        promises.push(this.create(ticket, queryRunner));
+      });
+      await Promise.all(promises);
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

@@ -895,4 +895,184 @@ describe('TripService', () => {
       expect(error).toBeInstanceOf(BadRequestException);
     }
   });
+  it('expect bulk create method to be successfully executed ', async () => {
+    const secondSeat: Seat = new Seat();
+    secondSeat.booked = false;
+    const seat = secondSeat;
+    const mockedConfigService = {
+      get: jest.fn((key: string) => {
+        if (key === 'appConfig.pricesConfig') {
+          return JSON.parse(process.env.COSTS || '{"serviceTypeCost":{"primera clase":10000,"economico":5000},"seatTypeCost":{"asiento cama":10000,"asiento simple":5000},"fuelCostPerLt":900,"fuelPerKm":{"doble piso":2,"piso simple":1.78}}');
+        }
+      })
+    };
+    const mockedManager = {
+      save: jest.fn(),
+      update: jest.fn(),
+      getRepository: () => {
+        return {
+          update: jest.fn()
+        };
+      }
+    };
+    const mockedDataSource = {
+      createQueryRunner: () => {
+        return {
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          release: jest.fn(),
+          manager: mockedManager
+        };
+      },
+      getRepository: () => {
+        return {
+          update: jest.fn(),
+          createQueryBuilder: () => {
+            return {
+              innerJoinAndSelect: () => {
+                return {
+                  innerJoinAndSelect: () => {
+                    return {
+                      innerJoinAndSelect: () => {
+                        return {
+                          innerJoinAndSelect: () => {
+                            return {
+                              innerJoinAndSelect: () => {
+                                return {
+                                  where: () => {
+                                    return {
+                                      getOne: () => Promise.reject({ error: 'some error' })
+                                    };
+                                  }
+                                };
+                              }
+                            };
+                          }
+                        };
+                      }
+                    };
+                  }
+                };
+              },
+              where: () => {
+                return {
+                  getOne: jest.fn(),
+                  innerJoinAndSelect: () => {
+                    return {
+                      getOne: () => seat
+                    };
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+    }).compile();
+    service = module.get<TicketService>(TicketService);
+    expect(service).toBeDefined();
+    await service.bulkCreate([]);
+  });
+  it('expect an error when bulk create method fails ', async () => {
+    const secondSeat: Seat = new Seat();
+    secondSeat.booked = false;
+    const seat = secondSeat;
+    const mockedConfigService = {
+      get: jest.fn((key: string) => {
+        if (key === 'appConfig.pricesConfig') {
+          return JSON.parse(process.env.COSTS || '{"serviceTypeCost":{"primera clase":10000,"economico":5000},"seatTypeCost":{"asiento cama":10000,"asiento simple":5000},"fuelCostPerLt":900,"fuelPerKm":{"doble piso":2,"piso simple":1.78}}');
+        }
+      })
+    };
+    const mockedManager = {
+      save: jest.fn(),
+      update: jest.fn(),
+      getRepository: () => {
+        return {
+          update: jest.fn()
+        };
+      }
+    };
+    const mockedDataSource = {
+      createQueryRunner: () => {
+        return {
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          release: jest.fn(),
+          manager: mockedManager
+        };
+      },
+      getRepository: () => {
+        return {
+          update: jest.fn(),
+          createQueryBuilder: () => {
+            return {
+              innerJoinAndSelect: () => {
+                return {
+                  innerJoinAndSelect: () => {
+                    return {
+                      innerJoinAndSelect: () => {
+                        return {
+                          innerJoinAndSelect: () => {
+                            return {
+                              innerJoinAndSelect: () => {
+                                return {
+                                  where: () => {
+                                    return {
+                                      getOne: () => Promise.reject({ error: 'some error' })
+                                    };
+                                  }
+                                };
+                              }
+                            };
+                          }
+                        };
+                      }
+                    };
+                  }
+                };
+              },
+              where: () => {
+                return {
+                  getOne: jest.fn(),
+                  innerJoinAndSelect: () => {
+                    return {
+                      getOne: () => seat
+                    };
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+    }).compile();
+    service = module.get<TicketService>(TicketService);
+    expect(service).toBeDefined();
+    try {
+      await service.bulkCreate([
+        plainToInstance(TicketDTO, {
+          seat: { id: 1 },
+          serviceType: {
+            id: 2
+          },
+          trip: {
+            id: 3
+          }
+        })
+      ]);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
 });
