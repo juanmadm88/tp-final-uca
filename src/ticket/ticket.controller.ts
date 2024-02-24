@@ -1,4 +1,4 @@
-import { Controller, Logger, Post, UseFilters, UseGuards, Headers, HttpCode, HttpStatus, Body, Param, Patch, Get, Query } from '@nestjs/common';
+import { Controller, Logger, Post, UseFilters, UseGuards, Headers, HttpCode, HttpStatus, Body, Param, Patch, Get, Query, UseInterceptors } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
@@ -9,10 +9,12 @@ import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { FindManyOptions } from 'typeorm';
 import { QueryParamsTicket } from '../constants/common';
 import { TicketsDTO } from './dtos/tickets.dto';
+import { VerifyDuplicatedSeatInterceptor } from './interceptor/verify-duplicated-seat.interceptor';
 
 @ApiTags('Ticket')
 @Controller('ticket')
 @UseGuards(AuthGuard)
+@UseInterceptors(VerifyDuplicatedSeatInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class TicketController {
   private logger = new Logger(TicketController.name);
