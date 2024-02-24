@@ -10,7 +10,10 @@ export class VerifyDuplicatedSeatInterceptor implements NestInterceptor {
     const body: TicketsDTO = this.utilsService.buildDTO(request.body, TicketsDTO);
     if (request.method !== 'POST' && request.path !== '/api/v1/transport/ticket/bulk') return next.handle();
     const duplicates: Array<number> = this.validateDuplicatedSeat(body?.getTickets());
-    if (duplicates?.length) throw new BadRequestException('Can´t book more than once the same seat ');
+    if (duplicates?.length) {
+      const errorMessage: string = this.buildErrorMessage(body.getTickets(), duplicates);
+      throw new BadRequestException(errorMessage);
+    }
     return next.handle();
   }
   private validateDuplicatedSeat(tickets: Array<TicketDTO> = []): Array<number> {
@@ -19,5 +22,11 @@ export class VerifyDuplicatedSeatInterceptor implements NestInterceptor {
     });
     const duplicates: Array<any> = seatIds.filter((item, index) => seatIds.indexOf(item) !== index);
     return duplicates;
+  }
+  private buildErrorMessage(tickets: Array<TicketDTO>, duplicates: Array<number>): string {
+    const tripIds: Array<any> = tickets.map((ticket: TicketDTO) => {
+      if (duplicates.includes(ticket.getSeat().getId())) return ticket.getTrip().getId();
+    });
+    return `Trips ${tripIds} have booked the same seat`;
   }
 }
