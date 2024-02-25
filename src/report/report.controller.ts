@@ -44,13 +44,13 @@ export class ReportController {
   })
   @ApiQuery({
     name: 'autobusIsAsigned',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Autobus/es asigned to trips or not '
   })
   @ApiQuery({
     name: 'ticketCancelled',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Ticket/s cancelled or not '
   })
@@ -89,13 +89,13 @@ export class ReportController {
   })
   @ApiQuery({
     name: 'ticketCancelled',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Tickets cancelled or not '
   })
   @ApiQuery({
     name: 'tripFinished',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Trips finished or not '
   })
@@ -134,13 +134,13 @@ export class ReportController {
   })
   @ApiQuery({
     name: 'ticketCancelled',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Tickets cancelled or not '
   })
   @ApiQuery({
     name: 'tripFinished',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Trips finished or not '
   })
@@ -179,13 +179,13 @@ export class ReportController {
   })
   @ApiQuery({
     name: 'ticketCancelled',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Tickets cancelled or not '
   })
   @ApiQuery({
     name: 'tripFinished',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Trips finished or not '
   })
@@ -224,13 +224,13 @@ export class ReportController {
   })
   @ApiQuery({
     name: 'ticketCancelled',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Tickets cancelled or not '
   })
   @ApiQuery({
     name: 'tripFinished',
-    type: 'number',
+    type: 'boolean',
     required: false,
     description: 'Choose betweeen Trips finished or not '
   })
