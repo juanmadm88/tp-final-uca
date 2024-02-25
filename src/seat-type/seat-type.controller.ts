@@ -3,7 +3,7 @@ import { SeatTypeService } from './seat-type.service';
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { SeatTypeDTO } from './dtos/seat-type.dto';
 import { UpdateSeatTypeDTO } from './dtos/update-service-type.dto';
 import { FindManyOptions } from 'typeorm';

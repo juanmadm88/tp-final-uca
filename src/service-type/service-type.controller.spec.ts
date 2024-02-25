@@ -3,7 +3,7 @@ import { ServiceTypeController } from './service-type.controller';
 import { ServiceTypeService } from './service-type.service';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { ServiceTypeDTO } from './dtos/service-type.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateServiceTypeDTO } from './dtos/update-service-type.dto';

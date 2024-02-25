@@ -3,7 +3,7 @@ import { TerminalController } from './terminal.controller';
 import { TerminalService } from './terminal.service';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { TerminalDTO } from './dtos/terminal.dto';
 import { plainToInstance } from 'class-transformer';
 describe('TerminalController', () => {

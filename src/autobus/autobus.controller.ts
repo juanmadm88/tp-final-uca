@@ -3,7 +3,7 @@ import { AutobusService } from './autobus.service';
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { AutoBusDTO } from './dtos/autobus.dto';
 import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';
 import { FindManyOptions } from 'typeorm';

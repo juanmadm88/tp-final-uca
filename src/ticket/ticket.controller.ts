@@ -3,7 +3,7 @@ import { TicketService } from './ticket.service';
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { TicketDTO } from './dtos/ticket.dto';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { FindManyOptions } from 'typeorm';

@@ -3,7 +3,7 @@ import { ReportController } from './report.controller';
 import { ReportService } from './report.service';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 describe('ReportController', () => {
   let controller: ReportController;
   const mockedService = {

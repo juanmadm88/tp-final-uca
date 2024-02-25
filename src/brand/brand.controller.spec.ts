@@ -3,7 +3,7 @@ import { BrandController } from './brand.controller';
 import { BrandService } from './brand.service';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { BrandDTO } from './dtos/brand.dto';
 import { plainToInstance } from 'class-transformer';
 describe('BrandController', () => {

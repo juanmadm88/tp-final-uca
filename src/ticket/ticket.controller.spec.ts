@@ -3,7 +3,7 @@ import { TicketService } from './ticket.service';
 import { TicketController } from './ticket.controller';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { TicketDTO } from './dtos/ticket.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';

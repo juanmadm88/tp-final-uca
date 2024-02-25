@@ -3,7 +3,7 @@ import { ModelController } from './model.controller';
 import { ModelService } from './model.service';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { ModelDTO } from './dtos/model.dto';
 import { plainToInstance } from 'class-transformer';
 describe('ModelController', () => {

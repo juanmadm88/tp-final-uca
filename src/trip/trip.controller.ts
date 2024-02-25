@@ -3,7 +3,7 @@ import { TripService } from './trip.service';
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { TripDTO } from './dtos/trip.dto';
 import { UpdateTripDTO } from './dtos/update-trip.dto';
 import { QueryParamsTrip } from '../constants/common';

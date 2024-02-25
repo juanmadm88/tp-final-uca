@@ -3,7 +3,7 @@ import { AutobusService } from './autobus.service';
 import { AutobusController } from './autobus.controller';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { AutoBusDTO } from './dtos/autobus.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';

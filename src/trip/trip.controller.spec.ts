@@ -3,7 +3,7 @@ import { TripService } from './trip.service';
 import { TripController } from './trip.controller';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { TripDTO } from './dtos/trip.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateTripDTO } from './dtos/update-trip.dto';

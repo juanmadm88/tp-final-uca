@@ -3,7 +3,7 @@ import { SeatTypeController } from './seat-type.controller';
 import { SeatTypeService } from './seat-type.service';
 import { Logger } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { SeatTypeDTO } from './dtos/seat-type.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateSeatTypeDTO } from './dtos/update-service-type.dto';

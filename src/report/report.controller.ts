@@ -2,7 +2,7 @@ import { Controller, Logger, UseFilters, UseGuards, Headers, HttpCode, HttpStatu
 import { ApiHeader, ApiInternalServerErrorResponse, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../filter/http-exception.filter';
 import { UtilsService } from '../utils/utils.service';
-import { AuthGuard } from '../authentication/auth.guard';
+import { AuthGuard } from '../authentication/guard/auth.guard';
 import { FindManyOptions } from 'typeorm';
 import { QueryParams } from '../constants/common';
 import { ReportService } from './report.service';
