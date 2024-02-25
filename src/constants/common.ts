@@ -25,3 +25,7 @@ export interface TripParameters {
   kilometers: number;
   autobusModel: Model;
 }
+
+export interface TicketResponse {
+  totalCost: number;
+}

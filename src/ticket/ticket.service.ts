@@ -19,7 +19,7 @@ import { TripParameters } from '../constants/common';
 @Injectable()
 export class TicketService {
   constructor(private dataSource: DataSource, private configService: ConfigService, private utils: UtilsService) {}
-  async create(dto: TicketDTO, query?: QueryRunner): Promise<any> {
+  async create(dto: TicketDTO, query?: QueryRunner): Promise<Ticket> {
     const queryRunner = query ? query : this.dataSource.createQueryRunner();
     try {
       if (!query) {
@@ -34,8 +34,9 @@ export class TicketService {
       if (seatDB.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
       await queryRunner.manager.getRepository(Seat).update(seatDB.id, { booked: true });
       const price: number = await this.calculateTotalPrice(dto, { serviceTypeDB, seatType });
-      await queryRunner.manager.save(this.buildTicketEntity(dto, price));
+      const result: Ticket = await queryRunner.manager.save(this.buildTicketEntity(dto, price));
       if (!query) await queryRunner.commitTransaction();
+      return result;
     } catch (error) {
       if (!query) await queryRunner.rollbackTransaction();
       throw error;
@@ -165,17 +166,18 @@ export class TicketService {
       .getMany();
     return this.utils.buildDTO(tickets, TicketDTO);
   }
-  async bulkCreate(tickets: Array<TicketDTO>): Promise<any> {
+  async bulkCreate(tickets: Array<TicketDTO>): Promise<Array<Ticket>> {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      const promises: Array<Promise<any>> = [];
+      const promises: Array<Promise<Ticket>> = [];
       tickets.forEach((ticket: TicketDTO) => {
         promises.push(this.create(ticket, queryRunner));
       });
-      await Promise.all(promises);
+      const result: Array<Ticket> = await Promise.all(promises);
       await queryRunner.commitTransaction();
+      return result;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;

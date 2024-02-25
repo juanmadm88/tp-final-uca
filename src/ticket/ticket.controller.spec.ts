@@ -43,7 +43,7 @@ describe('TicketController', () => {
     expect(controller).toBeDefined();
   });
   it('expect create method executed successfully', async () => {
-    const spy = jest.spyOn(mockedService, 'create').mockImplementation(() => Promise.resolve({ status: 200 }));
+    const spy = jest.spyOn(mockedService, 'create').mockImplementation(() => Promise.resolve({ price: 200 }));
     const dto: TicketDTO = plainToInstance(TicketDTO, {
       user: {
         id: 17
@@ -59,8 +59,10 @@ describe('TicketController', () => {
         booked: true
       }
     });
-    await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    const response = await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
     expect(spy).toBeCalledTimes(1);
+    expect(response).toBeDefined();
+    expect(response.totalCost === 200).toBeTruthy();
   });
   it('expect an Error when create method fails', async () => {
     jest.spyOn(mockedService, 'create').mockImplementation(() => Promise.reject({ status: 404 }));
@@ -178,7 +180,7 @@ describe('TicketController', () => {
     }
   });
   it('expect bulkCreate method to be successfully executed ', async () => {
-    jest.spyOn(mockedService, 'bulkCreate').mockImplementation(() => Promise.resolve());
+    jest.spyOn(mockedService, 'bulkCreate').mockImplementation(() => Promise.resolve([{ price: 1 }, { price: 2 }]));
     const dto: TicketsDTO = plainToInstance(TicketsDTO, {
       tickets: [
         {

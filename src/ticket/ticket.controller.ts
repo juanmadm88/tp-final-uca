@@ -7,9 +7,10 @@ import { AuthGuard } from '../authentication/guard/auth.guard';
 import { TicketDTO } from './dtos/ticket.dto';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { FindManyOptions } from 'typeorm';
-import { QueryParamsTicket } from '../constants/common';
+import { QueryParamsTicket, TicketResponse } from '../constants/common';
 import { TicketsDTO } from './dtos/tickets.dto';
 import { VerifyDuplicatedSeatInterceptor } from './interceptor/verify-duplicated-seat.interceptor';
+import { Ticket } from './entities/ticket.entity';
 
 @ApiTags('Ticket')
 @Controller('ticket')
@@ -19,11 +20,11 @@ import { VerifyDuplicatedSeatInterceptor } from './interceptor/verify-duplicated
 export class TicketController {
   private logger = new Logger(TicketController.name);
   constructor(private service: TicketService, private utilsService: UtilsService) {}
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Create a new Ticket' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
     description: 'The Ticket has been successfully created.'
   })
   @ApiHeader({
@@ -42,9 +43,11 @@ export class TicketController {
     required: true
   })
   @Post('/')
-  async create(@Body() dto: TicketDTO, @Headers('unique-trace-id') uniqueTraceId: string) {
+  async create(@Body() dto: TicketDTO, @Headers('unique-trace-id') uniqueTraceId: string): Promise<TicketResponse> {
     try {
-      await this.service.create(dto);
+      const result: Ticket = await this.service.create(dto);
+      const response: TicketResponse = { totalCost: result.price };
+      return response;
     } catch (error) {
       this.logger.log({
         level: 'error',
@@ -185,10 +188,11 @@ export class TicketController {
       this.utilsService.throwInternalServerIfErrorIsNotHttpExcetion(error);
     }
   }
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Bulk Create Tickets' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
+    status: HttpStatus.OK,
     description: 'The Tickets have been successfully created.'
   })
   @ApiHeader({
@@ -207,9 +211,14 @@ export class TicketController {
     required: true
   })
   @Post('/bulk')
-  async bulkCreate(@Body() dto: TicketsDTO, @Headers('unique-trace-id') uniqueTraceId: string) {
+  async bulkCreate(@Body() dto: TicketsDTO, @Headers('unique-trace-id') uniqueTraceId: string): Promise<TicketResponse> {
     try {
-      await this.service.bulkCreate(dto.getTickets());
+      const result: Array<Ticket> = await this.service.bulkCreate(dto.getTickets());
+      const totalCost: number = result.reduce((accumulator, ticket) => accumulator + ticket.price, 0);
+      const response: TicketResponse = {
+        totalCost
+      };
+      return response;
     } catch (error) {
       this.logger.log({
         level: 'error',
