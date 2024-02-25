@@ -91,7 +91,6 @@ export class TicketService {
     const price: number = (fuelCostPerLt * fuelPerKm[autobusModel.description.toLowerCase()] * kilometers) / numberOfSeats + serviceTypeCost[serviceType.description.toLowerCase()] + seatCosts;
     return price;
   }
-  //TODO: PROBAR ESTO PORQUE MODIFIQUE LA FUNCION QUE CALCULA LOS COSTOS
   async update(idTicket: number, dto: UpdateTicketDTO): Promise<any> {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
@@ -119,9 +118,9 @@ export class TicketService {
           .innerJoinAndSelect('ticket.trip', 'trip')
           .where('ticket.id = :id', { id: idTicket })
           .getOne();
-        const seatDB: Seat = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').innerJoinAndSelect('seat.seatType', 'seatType').where('seat.id = :id', { id: seatDTO.getId() }).getOne();
         const updateTicketDb: Ticket = new Ticket();
         if (seatDTO && seatDTO.getId() != ticketDB.seat.id) {
+          const seatDB: Seat = await this.dataSource.getRepository(Seat).createQueryBuilder('seat').innerJoinAndSelect('seat.seatType', 'seatType').where('seat.id = :id', { id: seatDTO.getId() }).getOne();
           if (seatDB.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
           seatTypeDB = seatDB.seatType;
           updateTicketDb.seat = new Seat();
