@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 
 /* istanbul ignore file */
 
@@ -16,13 +16,13 @@ export class BrandDTO {
   @ApiProperty({
     name: 'description',
     type: 'string',
-    required: true,
+    required: false,
     description: 'The Brand description '
   })
   @Expose()
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  private description: string;
+  private description?: string;
 
   @ApiProperty({
     name: 'id',
