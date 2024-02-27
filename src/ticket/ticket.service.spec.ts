@@ -108,7 +108,6 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    expect(service).toBeDefined();
     await service.update(
       1,
       plainToInstance(UpdateTicketDTO, {
@@ -172,7 +171,6 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    expect(service).toBeDefined();
     try {
       await service.update(
         1,
@@ -239,7 +237,6 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    expect(service).toBeDefined();
     try {
       await service.create(
         plainToInstance(TicketDTO, {
@@ -334,7 +331,6 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    expect(service).toBeDefined();
     try {
       await service.create(
         plainToInstance(TicketDTO, {
@@ -450,7 +446,6 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    expect(service).toBeDefined();
     await service.create(
       plainToInstance(TicketDTO, {
         seat: { id: 2, booked: true },
@@ -975,7 +970,6 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    expect(service).toBeDefined();
     await service.bulkCreate([]);
   });
   it('expect an error when bulk create method fails ', async () => {
@@ -1058,7 +1052,6 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    expect(service).toBeDefined();
     try {
       await service.bulkCreate([
         plainToInstance(TicketDTO, {
@@ -1071,6 +1064,93 @@ describe('TripService', () => {
           }
         })
       ]);
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('expect bulkUpdate method to be successfully executed ', async () => {
+    const ticket: Ticket = new Ticket();
+    const seat: Seat = new Seat();
+    seat.booked = true;
+    ticket.seat = seat;
+    const mockedConfigService = {
+      get: jest.fn((key: string) => {
+        if (key === 'appConfig.pricesConfig') {
+          return JSON.parse(process.env.COSTS || '{"serviceTypeCost":{"primera clase":10000,"economico":5000},"seatTypeCost":{"asiento cama":10000,"asiento simple":5000},"fuelCostPerLt":900,"fuelPerKm":{"doble piso":2,"piso simple":1.78}}');
+        }
+      })
+    };
+    const mockedManager = {
+      save: jest.fn(),
+      update: jest.fn(),
+      getRepository: () => {
+        return {
+          update: jest.fn()
+        };
+      }
+    };
+    const mockedDataSource = {
+      createQueryRunner: () => {
+        return {
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          release: jest.fn(),
+          manager: mockedManager
+        };
+      },
+      getRepository: () => {
+        return {
+          update: jest.fn(),
+          createQueryBuilder: () => {
+            return {
+              where: () => {
+                return {
+                  innerJoinAndSelect: () => {
+                    return {
+                      getOne: () => ticket
+                    };
+                  }
+                };
+              }
+            };
+          }
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+    }).compile();
+    service = module.get<TicketService>(TicketService);
+    await service.bulkUpdate([]);
+  });
+  it('expect an error when bulkUpdate method fails ', async () => {
+    const mockedDataSource = {
+      createQueryRunner: () => {
+        return {
+          connect: jest.fn(),
+          startTransaction: jest.fn(),
+          rollbackTransaction: jest.fn(),
+          commitTransaction: jest.fn(),
+          release: jest.fn(),
+          manager: jest.fn()
+        };
+      }
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: ConfigService, useValue: jest.fn() }, UtilsService]
+    }).compile();
+    service = module.get<TicketService>(TicketService);
+    jest.spyOn(service, 'update').mockRejectedValue({ error: 'error updating ticket' });
+    try {
+      await service.bulkUpdate(
+        plainToInstance(UpdateTicketDTO, [
+          {
+            id: 1
+          }
+        ])
+      );
     } catch (error) {
       expect(error).toBeDefined();
     }

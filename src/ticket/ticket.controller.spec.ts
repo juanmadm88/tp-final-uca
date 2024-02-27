@@ -8,13 +8,15 @@ import { TicketDTO } from './dtos/ticket.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateTicketDTO } from './dtos/update-ticket.dto';
 import { TicketsDTO } from './dtos/tickets.dto';
+import { UpdateTicketsDTO } from './dtos/update-tickets.dto';
 describe('TicketController', () => {
   let controller: TicketController;
   const mockedService = {
     create: jest.fn(),
     update: jest.fn(),
     findAll: jest.fn(),
-    bulkCreate: jest.fn()
+    bulkCreate: jest.fn(),
+    bulkUpdate: jest.fn()
   };
   const mockedAuthGuard = {
     canActivate: jest.fn()
@@ -201,5 +203,61 @@ describe('TicketController', () => {
       ]
     });
     await controller.bulkCreate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+  });
+  it('expect bulkUpdate method to be successfully executed ', async () => {
+    jest.spyOn(mockedService, 'bulkUpdate').mockImplementation(() => Promise.resolve([{ price: 1 }, { price: 2 }]));
+    const dto: UpdateTicketsDTO = plainToInstance(UpdateTicketsDTO, {
+      tickets: [
+        {
+          user: {
+            id: 17
+          },
+          trip: {
+            id: 5
+          },
+          serviceType: {
+            id: 23
+          },
+          seat: {
+            id: 31,
+            booked: true
+          }
+        },
+        {
+          id: 1
+        }
+      ]
+    });
+    await controller.bulkUpdate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+  });
+  it('expect an Error when bulkUpdate service method fails', async () => {
+    jest.spyOn(mockedService, 'bulkUpdate').mockImplementation(() => Promise.reject({ status: 404 }));
+    try {
+      const dto: UpdateTicketsDTO = plainToInstance(UpdateTicketsDTO, {
+        tickets: [
+          {
+            user: {
+              id: 17
+            },
+            trip: {
+              id: 5
+            },
+            serviceType: {
+              id: 23
+            },
+            seat: {
+              id: 31,
+              booked: true
+            }
+          },
+          {
+            id: 2
+          }
+        ]
+      });
+      await controller.bulkUpdate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
   });
 });

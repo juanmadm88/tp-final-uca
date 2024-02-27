@@ -8,7 +8,7 @@ export class VerifyDuplicatedSeatInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest();
     const body: TicketsDTO = this.utilsService.buildDTO(request.body, TicketsDTO);
-    if (request.method !== 'POST' && request.path !== '/api/v1/transport/ticket/bulk') return next.handle();
+    if (request.path !== '/api/v1/transport/ticket/bulk') return next.handle();
     const duplicates: Array<number> = this.validateDuplicatedSeat(body?.getTickets());
     if (duplicates?.length) {
       const errorMessage: string = this.buildErrorMessage(body.getTickets(), duplicates);

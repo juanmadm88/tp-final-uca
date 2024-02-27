@@ -91,11 +91,13 @@ export class TicketService {
     const price: number = (fuelCostPerLt * fuelPerKm[autobusModel.description.toLowerCase()] * kilometers) / numberOfSeats + serviceTypeCost[serviceType.description.toLowerCase()] + seatCosts;
     return price;
   }
-  async update(idTicket: number, dto: UpdateTicketDTO): Promise<any> {
-    const queryRunner = this.dataSource.createQueryRunner();
+  async update(idTicket: number, dto: UpdateTicketDTO, query?: QueryRunner): Promise<any> {
+    const queryRunner = query ? query : this.dataSource.createQueryRunner();
     try {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
+      if (!query) {
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+      }
       const isCancelled: boolean = dto.getCancelled();
       if (isCancelled) {
         await queryRunner.manager.getRepository(Ticket).update(idTicket, { cancelled: isCancelled });
@@ -140,12 +142,12 @@ export class TicketService {
         updateTicketDb.price = price;
         await queryRunner.manager.getRepository(Ticket).save({ id: idTicket, ...updateTicketDb });
       }
-      await queryRunner.commitTransaction();
+      if (!query) await queryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (!query) await queryRunner.rollbackTransaction();
       throw error;
     } finally {
-      await queryRunner.release();
+      if (!query) await queryRunner.release();
     }
   }
   async findAll(options: FindManyOptions = {}): Promise<Array<TicketDTO>> {
@@ -177,6 +179,24 @@ export class TicketService {
       const result: Array<Ticket> = await Promise.all(promises);
       await queryRunner.commitTransaction();
       return result;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+  async bulkUpdate(tickets: Array<UpdateTicketDTO>): Promise<any> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      const promises: Array<Promise<any>> = [];
+      tickets.forEach((ticket: UpdateTicketDTO) => {
+        promises.push(this.update(ticket.getId(), ticket, queryRunner));
+      });
+      await Promise.all(promises);
+      await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
