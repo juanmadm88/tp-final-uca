@@ -153,7 +153,7 @@ export class TripController {
     }
   }
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Update an Autobus' })
+  @ApiOperation({ summary: 'Update a Trip ' })
   @ApiInternalServerErrorResponse()
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
