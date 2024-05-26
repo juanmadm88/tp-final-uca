@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
@@ -43,6 +44,7 @@
     "mysql2": "^3.6.5",
     "nest-winston": "^1.9.4",
     "node-request-context": "^1.0.5",
+    "nodemailer": "^6.9.13",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
