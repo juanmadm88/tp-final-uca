@@ -61,7 +61,7 @@ describe('TicketController', () => {
         booked: true
       }
     });
-    const response = await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    const response = await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 'pedro', 'picapiedra', 'sarasa@gmail.com');
     expect(spy).toBeCalledTimes(1);
     expect(response).toBeDefined();
     expect(response.totalCost === 200).toBeTruthy();
@@ -84,7 +84,7 @@ describe('TicketController', () => {
       }
     });
     try {
-      await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+      await controller.create(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 'pedro', 'picapiedra', 'sarsa@gmail.com');
     } catch (error) {
       expect(error).toBeDefined();
     }
@@ -176,7 +176,7 @@ describe('TicketController', () => {
           }
         ]
       });
-      await controller.bulkCreate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+      await controller.bulkCreate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 'pedro', 'picapiedra', 'sarasa@gmail.com');
     } catch (error) {
       expect(error).toBeDefined();
     }
@@ -202,7 +202,7 @@ describe('TicketController', () => {
         }
       ]
     });
-    await controller.bulkCreate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830');
+    await controller.bulkCreate(dto, '9568be23-16c6-4d87-8dd0-614b34a6c830', 'pedro', 'picapiedra', 'sarasa@gmail.com');
   });
   it('expect bulkUpdate method to be successfully executed ', async () => {
     jest.spyOn(mockedService, 'bulkUpdate').mockImplementation(() => Promise.resolve([{ price: 1 }, { price: 2 }]));
