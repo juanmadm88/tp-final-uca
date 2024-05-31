@@ -40,7 +40,7 @@ export class TicketService {
 
       if (!query) {
         await queryRunner.commitTransaction();
-        this.mailer.send(this.buildEmail(lastName, firstName, email, price));
+        await this.mailer.send(this.buildEmail(lastName, firstName, email, price));
       }
       return result;
     } catch (error) {
@@ -190,8 +190,9 @@ export class TicketService {
       tickets.forEach((ticket: TicketDTO) => {
         promises.push(this.create(ticket, lastName, firstName, email, queryRunner));
       });
-      //TODO: poner una logica con un contador de los precios, para hacer un llamado al mail service
       const result: Array<Ticket> = await Promise.all(promises);
+      const totalPrice: number = result?.reduce((accumulator, currentValue) => accumulator + currentValue.price, 0);
+      await this.mailer.send(this.buildEmail(lastName, firstName, email, totalPrice));
       await queryRunner.commitTransaction();
       return result;
     } catch (error) {
