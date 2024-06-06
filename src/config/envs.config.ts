@@ -15,6 +15,13 @@ const baseConfig = {
     synchronize: !!process.env.DB_SYNCHRONIZE,
     allowLoggingQueries: process.env.DB_ALLOW_LOGGING || true
   },
+  mailSender: {
+    host: process.env.MAIL_SENDER_HOST || 'sandbox.smtp.mailtrap.io',
+    port: Number(process.env.MAIL_SENDER_PORT || 2525),
+    userName: process.env.MAIL_SENDER_USERNAME || '4ad2224bb238a3',
+    password: process.env.MAIL_SENDER_PASSWORD || '711b4518e3a6c6',
+    from: 'example@domain.com'
+  },
   pricesConfig: JSON.parse(process.env.COSTS || '{"serviceTypeCost":{"primera clase":10000,"economico":5000},"seatTypeCost":{"asiento cama":10000,"asiento simple":5000},"fuelCostPerLt":900,"fuelPerKm":{"doble piso":2,"piso simple":1.78}}'),
   token: {
     secret: process.env.TOKEN_SECRET || 'thisIsAkeyforUcaFinalTp$',

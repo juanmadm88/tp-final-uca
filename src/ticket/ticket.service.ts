@@ -15,11 +15,13 @@ import { UtilsService } from '../utils/utils.service';
 import { UpdateSeatDTO } from '../autobus/dtos/update-seat.dto';
 import { UpdateServiceTypeDTO } from '../service-type/dtos/update-service-type.dto';
 import { TripParameters } from '../constants/common';
+import { MailService } from '../mail/mail.service';
+import { ISendMailOptions } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class TicketService {
-  constructor(private dataSource: DataSource, private configService: ConfigService, private utils: UtilsService) {}
-  async create(dto: TicketDTO, query?: QueryRunner): Promise<Ticket> {
+  constructor(private dataSource: DataSource, private configService: ConfigService, private utils: UtilsService, private mailer: MailService) {}
+  async create(dto: TicketDTO, lastName: string, firstName: string, email: string, query?: QueryRunner): Promise<Ticket> {
     const queryRunner = query ? query : this.dataSource.createQueryRunner();
     try {
       if (!query) {
@@ -35,7 +37,11 @@ export class TicketService {
       await queryRunner.manager.getRepository(Seat).update(seatDB.id, { booked: true });
       const price: number = await this.calculateTotalPrice(dto, { serviceTypeDB, seatType });
       const result: Ticket = await queryRunner.manager.save(this.buildTicketEntity(dto, price));
-      if (!query) await queryRunner.commitTransaction();
+
+      if (!query) {
+        await queryRunner.commitTransaction();
+        await this.mailer.send(this.buildEmail(lastName, firstName, email, price));
+      }
       return result;
     } catch (error) {
       if (!query) await queryRunner.rollbackTransaction();
@@ -167,16 +173,26 @@ export class TicketService {
       .getMany();
     return this.utils.buildDTO(tickets, TicketDTO);
   }
-  async bulkCreate(tickets: Array<TicketDTO>): Promise<Array<Ticket>> {
+  private buildEmail = (lastName: string, firstName: string, email: string, price: number): ISendMailOptions => {
+    //TODO: armar un html con la informacion del asunto, refactorizar esto
+    return {
+      subject: `Estimado usuario: ${lastName} ${firstName}, se ha hecho una reserva por un precio de ${price}`,
+      to: email
+    };
+  };
+
+  async bulkCreate(tickets: Array<TicketDTO>, lastName: string, firstName: string, email: string): Promise<Array<Ticket>> {
     const queryRunner = this.dataSource.createQueryRunner();
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
       const promises: Array<Promise<Ticket>> = [];
       tickets.forEach((ticket: TicketDTO) => {
-        promises.push(this.create(ticket, queryRunner));
+        promises.push(this.create(ticket, lastName, firstName, email, queryRunner));
       });
       const result: Array<Ticket> = await Promise.all(promises);
+      const totalPrice: number = result?.reduce((accumulator, currentValue) => accumulator + currentValue.price, 0);
+      await this.mailer.send(this.buildEmail(lastName, firstName, email, totalPrice));
       await queryRunner.commitTransaction();
       return result;
     } catch (error) {

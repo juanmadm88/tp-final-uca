@@ -29,6 +29,7 @@ import { TicketModule } from './ticket/ticket.module';
 import { TicketController } from './ticket/ticket.controller';
 import { ReportModule } from './report/report.module';
 import { ReportController } from './report/report.controller';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ReportController } from './report/report.controller';
       }),
       inject: [ConfigService]
     }),
+    MailModule,
     UtilsModule,
     UserModule,
     AuthModule,
