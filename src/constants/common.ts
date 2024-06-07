@@ -29,3 +29,7 @@ export interface TripParameters {
 export interface TicketResponse {
   totalCost: number;
 }
+
+export interface IMapper {
+  transform(dto: number): any;
+}

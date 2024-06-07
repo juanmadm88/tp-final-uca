@@ -5,10 +5,11 @@ import { ServiceType } from './entities/service-type.entity';
 import { UtilsService } from '../utils/utils.service';
 import { ServiceTypeDTO } from './dtos/service-type.dto';
 import { UpdateServiceTypeDTO } from './dtos/update-service-type.dto';
+import { ServiceTypeMapper } from './mapper/service-type.mapper';
 
 @Injectable()
 export class ServiceTypeService {
-  constructor(@InjectRepository(ServiceType) private readonly repository: Repository<ServiceType>, private utils: UtilsService) {}
+  constructor(@InjectRepository(ServiceType) private readonly repository: Repository<ServiceType>, private utils: UtilsService, private mapper: ServiceTypeMapper) {}
   async findAll(options: FindManyOptions = {}): Promise<Array<ServiceTypeDTO>> {
     let { where } = options;
     where ? { ...where, isActive: true } : (where = { isActive: true });
@@ -19,17 +20,12 @@ export class ServiceTypeService {
     return this.utils.buildDTO(await this.repository.find(options), ServiceTypeDTO);
   }
   async update(id: number, updateDTO: UpdateServiceTypeDTO): Promise<any> {
-    const entity: ServiceType = this.buildServiceTypeEntity(updateDTO);
+    const entity: ServiceType = this.mapper.transform(updateDTO);
     await this.repository.save({ ...entity, id });
   }
-  private buildServiceTypeEntity(dto: any): ServiceType {
-    const entity: ServiceType = new ServiceType();
-    if (dto.getDescription()) entity.description = dto.getDescription();
-    if ('isActive' in dto && dto.getIsActive() != undefined) entity.isActive = dto.getIsActive();
-    return entity;
-  }
+
   async create(dto: ServiceTypeDTO): Promise<any> {
-    const entity: ServiceType = this.buildServiceTypeEntity(dto);
+    const entity: ServiceType = this.mapper.transform(dto);
     await this.repository.save(entity);
   }
 }
