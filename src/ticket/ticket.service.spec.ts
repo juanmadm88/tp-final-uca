@@ -910,6 +910,8 @@ describe('TripService', () => {
   it('expect bulk create method to be successfully executed ', async () => {
     const secondSeat: Seat = new Seat();
     secondSeat.booked = false;
+    secondSeat.seatType = new SeatType();
+    secondSeat.seatType.description = 'primera clase';
     const seat = secondSeat;
     const mockedConfigService = {
       get: jest.fn((key: string) => {
@@ -955,7 +957,22 @@ describe('TripService', () => {
                                 return {
                                   where: () => {
                                     return {
-                                      getOne: () => Promise.reject({ error: 'some error' })
+                                      getOne: () =>
+                                        Promise.resolve({
+                                          booked: false,
+                                          autobus: {
+                                            model: {
+                                              description: 'doble piso'
+                                            },
+                                            seats: [{}, {}]
+                                          },
+                                          destination: {
+                                            kilometer: 120
+                                          },
+                                          origin: {
+                                            kilometerr: 100
+                                          }
+                                        })
                                     };
                                   }
                                 };
@@ -970,7 +987,11 @@ describe('TripService', () => {
               },
               where: () => {
                 return {
-                  getOne: jest.fn(),
+                  getOne: () => {
+                    return {
+                      description: 'economico'
+                    };
+                  },
                   innerJoinAndSelect: () => {
                     return {
                       getOne: () => seat
@@ -987,7 +1008,33 @@ describe('TripService', () => {
       providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    await service.bulkCreate([], 'pedro', 'picapiedra', 'sarsa@gmail.com');
+    jest.spyOn(mockedManager, 'save').mockResolvedValue([
+      plainToInstance(TicketDTO, {
+        seat: { id: 1 },
+        serviceType: {
+          id: 2
+        },
+        trip: {
+          id: 3
+        }
+      })
+    ]);
+    await service.bulkCreate(
+      [
+        plainToInstance(TicketDTO, {
+          seat: { id: 1 },
+          serviceType: {
+            id: 2
+          },
+          trip: {
+            id: 3
+          }
+        })
+      ],
+      'pedro',
+      'picapiedra',
+      'sarsa@gmail.com'
+    );
   });
   it('expect an error when bulk create method fails ', async () => {
     const secondSeat: Seat = new Seat();
