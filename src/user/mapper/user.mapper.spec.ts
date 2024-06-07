@@ -35,7 +35,14 @@ describe('UserMapper', () => {
           return 'theBoss88';
         },
         getRole: () => {
-          return 'admin';
+          return {
+            getDescription: () => {
+              return 'some description';
+            },
+            getId: () => {
+              return '12345';
+            }
+          };
         }
       };
       const response: User = service.transform(dto);
