@@ -31,5 +31,5 @@ export interface TicketResponse {
 }
 
 export interface IMapper {
-  transform(dto: number): any;
+  transform(dto: number, isUpdate?: boolean): any;
 }
