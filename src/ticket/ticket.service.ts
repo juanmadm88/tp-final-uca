@@ -3,7 +3,6 @@ import { TicketDTO } from './dtos/ticket.dto';
 import { DataSource, FindManyOptions, QueryRunner } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { ServiceType } from '../service-type/entities/service-type.entity';
-import { User } from '../user/entities/user.entity';
 import { Trip } from '../trip/entities/trip.entity';
 import { CreateSeatDTO } from './dtos/create-seat.dto';
 import { Seat } from '../autobus/entities/seat.entity';
@@ -17,10 +16,11 @@ import { UpdateServiceTypeDTO } from '../service-type/dtos/update-service-type.d
 import { TripParameters } from '../constants/common';
 import { MailService } from '../mail/mail.service';
 import { ISendMailOptions } from '@nestjs-modules/mailer';
+import { TicketMapper } from './mapper/ticket.mapper';
 
 @Injectable()
 export class TicketService {
-  constructor(private dataSource: DataSource, private configService: ConfigService, private utils: UtilsService, private mailer: MailService) {}
+  constructor(private dataSource: DataSource, private configService: ConfigService, private utils: UtilsService, private mailer: MailService, private mapper: TicketMapper) {}
   async create(dto: TicketDTO, lastName: string, firstName: string, email: string, query?: QueryRunner): Promise<Ticket> {
     const queryRunner = query ? query : this.dataSource.createQueryRunner();
     try {
@@ -36,7 +36,7 @@ export class TicketService {
       if (seatDB.booked) throw new BadRequestException(Constants.SEAT_ALREADY_BOOKED);
       await queryRunner.manager.getRepository(Seat).update(seatDB.id, { booked: true });
       const price: number = await this.calculateTotalPrice(dto, { serviceTypeDB, seatType });
-      const result: Ticket = await queryRunner.manager.save(this.buildTicketEntity(dto, price));
+      const result: Ticket = await queryRunner.manager.save(this.mapper.transform({ ...dto, price }));
 
       if (!query) {
         await queryRunner.commitTransaction();
@@ -72,21 +72,6 @@ export class TicketService {
       kilometers: Math.abs(trip.destination.kilometer - trip.origin.kilometer),
       autobusModel: trip.autobus.model
     };
-  }
-  private buildTicketEntity(dto: TicketDTO, price: number): Ticket {
-    const ticket: Ticket = new Ticket();
-    ticket.price = price;
-    ticket.serviceType = new ServiceType();
-    ticket.serviceType.id = dto.getServiceType().getId();
-    ticket.user = new User();
-    ticket.user.id = dto.getUser().getId();
-    ticket.trip = new Trip();
-    ticket.trip.id = dto.getTrip().getId();
-    const seatDto: CreateSeatDTO = dto.getSeat();
-    ticket.seat = new Seat();
-    ticket.seat.id = seatDto.getId();
-    if ('booked' in seatDto && seatDto.getBooked() != undefined) ticket.seat.booked = seatDto.getBooked();
-    return ticket;
   }
   private buildPrice(args: any): number {
     const { serviceType, kilometers, seatType, autobusModel, numberOfSeats } = args;
