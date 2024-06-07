@@ -5,6 +5,7 @@ import { plainToInstance } from 'class-transformer';
 import { AutoBusDTO } from './dtos/autobus.dto';
 import { DataSource } from 'typeorm';
 import { UpdateAutoBusDTO } from './dtos/update-autobus.dto';
+import { AutobusMapper } from './mapper/autobus.mapper';
 
 describe('AutobusService', () => {
   let service: AutobusService;
@@ -30,10 +31,12 @@ describe('AutobusService', () => {
       };
     }
   };
-
+  const mockedMapper = {
+    transform: jest.fn()
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AutobusService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+      providers: [AutobusService, { provide: AutobusMapper, useValue: mockedMapper }, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
     }).compile();
     service = module.get<AutobusService>(AutobusService);
   });
