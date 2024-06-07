@@ -6,6 +6,7 @@ import { SeatType } from './entities/seat-type.entity';
 import { plainToInstance } from 'class-transformer';
 import { SeatTypeDTO } from './dtos/seat-type.dto';
 import { UpdateSeatTypeDTO } from './dtos/update-service-type.dto';
+import { SeatTypeMapper } from './mapper/seat-type.mapper';
 
 describe('SeatTypeService', () => {
   let service: SeatTypeService;
@@ -20,9 +21,12 @@ describe('SeatTypeService', () => {
     save: mockedSave,
     find: mockedFind
   }));
+  const mockedMapper = {
+    transform: jest.fn()
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SeatTypeService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: getRepositoryToken(SeatType), useFactory: repositoryMockFactory }]
+      providers: [SeatTypeService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: SeatTypeMapper, useValue: mockedMapper }, { provide: getRepositoryToken(SeatType), useFactory: repositoryMockFactory }]
     }).compile();
     service = module.get<SeatTypeService>(SeatTypeService);
   });
