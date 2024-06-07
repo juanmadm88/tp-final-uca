@@ -6,7 +6,7 @@ import { Terminal } from '../../terminal/entities/terminal.entity';
 
 @Injectable()
 export class TripMapper implements IMapper {
-  public transform(data: any, isUpdate: boolean): Trip {
+  public transform(data: any, isUpdate?: boolean): Trip {
     const trip: Trip = new Trip();
     if (!isUpdate) {
       if (data.getArrivalDate()) trip.arrivalDate = data.getArrivalDate();

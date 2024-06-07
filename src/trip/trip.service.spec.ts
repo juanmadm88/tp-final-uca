@@ -7,6 +7,7 @@ import { DataSource } from 'typeorm';
 import { UpdateTripDTO } from './dtos/update-trip.dto';
 import { AutoBusDTO } from '../autobus/dtos/autobus.dto';
 import { BadRequestException } from '@nestjs/common';
+import { TripMapper } from './mapper/trip.mapper';
 
 describe('TripService', () => {
   let service: TripService;
@@ -19,6 +20,9 @@ describe('TripService', () => {
     update: jest.fn(),
     find: jest.fn(),
     findOne: jest.fn()
+  };
+  const mockedMapper = {
+    transform: jest.fn()
   };
   const mockedDataSource = {
     createQueryRunner: () => {
@@ -68,7 +72,7 @@ describe('TripService', () => {
   beforeEach(async () => {
     jest.resetAllMocks();
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: TripMapper, useValue: mockedMapper }, { provide: DataSource, useValue: mockedDataSource }]
     }).compile();
     service = module.get<TripService>(TripService);
   });
@@ -106,7 +110,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: TripMapper, useValue: mockedMapper }, { provide: DataSource, useValue: mockedDataSource }]
     }).compile();
     service = module.get<TripService>(TripService);
     await service.create(
@@ -223,7 +227,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: DataSource, useValue: mockedDataSource }]
+      providers: [TripService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: TripMapper, useValue: mockedMapper }, { provide: DataSource, useValue: mockedDataSource }]
     }).compile();
     service = module.get<TripService>(TripService);
     try {

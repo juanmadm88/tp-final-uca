@@ -43,8 +43,12 @@ describe('TicketMapper', () => {
         },
         getSeat: () => {
           return {
+            booked: true,
             getId: () => {
               return '11';
+            },
+            getBooked: () => {
+              return true;
             }
           };
         }
