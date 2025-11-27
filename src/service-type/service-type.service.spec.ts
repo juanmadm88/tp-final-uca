@@ -6,6 +6,7 @@ import { ServiceType } from './entities/service-type.entity';
 import { plainToInstance } from 'class-transformer';
 import { ServiceTypeDTO } from './dtos/service-type.dto';
 import { UpdateServiceTypeDTO } from './dtos/update-service-type.dto';
+import { ServiceTypeMapper } from './mapper/service-type.mapper';
 
 describe('ServiceTypeService', () => {
   let service: ServiceTypeService;
@@ -20,9 +21,12 @@ describe('ServiceTypeService', () => {
     save: mockedSave,
     find: mockedFind
   }));
+  const mockedMapper = {
+    transform: jest.fn()
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ServiceTypeService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: getRepositoryToken(ServiceType), useFactory: repositoryMockFactory }]
+      providers: [ServiceTypeService, { provide: ServiceTypeMapper, useValue: mockedMapper }, { provide: UtilsService, useValue: mockedUtilsService }, { provide: getRepositoryToken(ServiceType), useFactory: repositoryMockFactory }]
     }).compile();
     service = module.get<ServiceTypeService>(ServiceTypeService);
   });

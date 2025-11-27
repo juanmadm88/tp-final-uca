@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Terminal } from './entities/terminal.entity';
 import { plainToInstance } from 'class-transformer';
 import { TerminalDTO } from './dtos/terminal.dto';
+import { TerminalMapper } from './mapper/terminal.mapper';
 
 describe('TerminalService', () => {
   let service: TerminalService;
@@ -17,9 +18,12 @@ describe('TerminalService', () => {
     save: mockedSave,
     find: mockedFind
   }));
+  const mockedMapper = {
+    transform: jest.fn()
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TerminalService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: getRepositoryToken(Terminal), useFactory: repositoryMockFactory }]
+      providers: [TerminalService, { provide: TerminalMapper, useValue: mockedMapper }, { provide: UtilsService, useValue: mockedUtilsService }, { provide: getRepositoryToken(Terminal), useFactory: repositoryMockFactory }]
     }).compile();
     service = module.get<TerminalService>(TerminalService);
   });

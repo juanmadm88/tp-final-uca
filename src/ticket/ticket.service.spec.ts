@@ -11,11 +11,15 @@ import { BadRequestException } from '@nestjs/common';
 import { SeatType } from '../seat-type/entities/seat-type.entity';
 import { UtilsService } from '../utils/utils.service';
 import { MailService } from '../mail/mail.service';
+import { TicketMapper } from './mapper/ticket.mapper';
 
 describe('TripService', () => {
   let service: TicketService;
   const mockedMailService = {
     send: jest.fn()
+  };
+  const mockedMapper = {
+    transform: jest.fn()
   };
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -52,7 +56,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, ConfigService, UtilsService, { provide: MailService, useValue: mockedMailService }]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: TicketMapper, useValue: mockedMapper }, ConfigService, UtilsService, { provide: MailService, useValue: mockedMailService }]
     }).compile();
     service = module.get<TicketService>(TicketService);
     expect(service).toBeDefined();
@@ -109,7 +113,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: TicketMapper, useValue: mockedMapper }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     await service.update(
@@ -172,7 +176,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     try {
@@ -238,7 +242,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     try {
@@ -335,7 +339,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     try {
@@ -453,7 +457,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     await service.create(
@@ -547,7 +551,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, ConfigService, { provide: UtilsService, useValue: mockedUtilsService }]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, ConfigService, { provide: UtilsService, useValue: mockedUtilsService }]
     }).compile();
     jest.spyOn(mockedUtilsService, 'buildDTO').mockImplementation(() =>
       plainToInstance(TicketDTO, [
@@ -610,7 +614,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     const spy = jest.spyOn(mockedDataSource.createQueryRunner().manager, 'getRepository');
@@ -659,7 +663,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
@@ -827,7 +831,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     jest.spyOn(mockedGetRepository, 'createQueryBuilder').mockImplementationOnce(() => {
@@ -906,6 +910,8 @@ describe('TripService', () => {
   it('expect bulk create method to be successfully executed ', async () => {
     const secondSeat: Seat = new Seat();
     secondSeat.booked = false;
+    secondSeat.seatType = new SeatType();
+    secondSeat.seatType.description = 'primera clase';
     const seat = secondSeat;
     const mockedConfigService = {
       get: jest.fn((key: string) => {
@@ -951,7 +957,22 @@ describe('TripService', () => {
                                 return {
                                   where: () => {
                                     return {
-                                      getOne: () => Promise.reject({ error: 'some error' })
+                                      getOne: () =>
+                                        Promise.resolve({
+                                          booked: false,
+                                          autobus: {
+                                            model: {
+                                              description: 'doble piso'
+                                            },
+                                            seats: [{}, {}]
+                                          },
+                                          destination: {
+                                            kilometer: 120
+                                          },
+                                          origin: {
+                                            kilometerr: 100
+                                          }
+                                        })
                                     };
                                   }
                                 };
@@ -966,7 +987,11 @@ describe('TripService', () => {
               },
               where: () => {
                 return {
-                  getOne: jest.fn(),
+                  getOne: () => {
+                    return {
+                      description: 'economico'
+                    };
+                  },
                   innerJoinAndSelect: () => {
                     return {
                       getOne: () => seat
@@ -980,10 +1005,36 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
-    await service.bulkCreate([], 'pedro', 'picapiedra', 'sarsa@gmail.com');
+    jest.spyOn(mockedManager, 'save').mockResolvedValue([
+      plainToInstance(TicketDTO, {
+        seat: { id: 1 },
+        serviceType: {
+          id: 2
+        },
+        trip: {
+          id: 3
+        }
+      })
+    ]);
+    await service.bulkCreate(
+      [
+        plainToInstance(TicketDTO, {
+          seat: { id: 1 },
+          serviceType: {
+            id: 2
+          },
+          trip: {
+            id: 3
+          }
+        })
+      ],
+      'pedro',
+      'picapiedra',
+      'sarsa@gmail.com'
+    );
   });
   it('expect an error when bulk create method fails ', async () => {
     const secondSeat: Seat = new Seat();
@@ -1062,7 +1113,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
+      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: TicketMapper, useValue: mockedMapper }, { provide: ConfigService, useValue: mockedConfigService }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     try {
@@ -1145,7 +1196,8 @@ describe('TripService', () => {
         { provide: MailService, useValue: mockedMailService },
         { provide: MailService, useValue: mockedMailService },
         { provide: ConfigService, useValue: mockedConfigService },
-        UtilsService
+        UtilsService,
+        { provide: TicketMapper, useValue: mockedMapper }
       ]
     }).compile();
     service = module.get<TicketService>(TicketService);
@@ -1165,7 +1217,7 @@ describe('TripService', () => {
       }
     };
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TicketService, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: jest.fn() }, UtilsService]
+      providers: [TicketService, { provide: TicketMapper, useValue: mockedMapper }, { provide: DataSource, useValue: mockedDataSource }, { provide: MailService, useValue: mockedMailService }, { provide: ConfigService, useValue: jest.fn() }, UtilsService]
     }).compile();
     service = module.get<TicketService>(TicketService);
     jest.spyOn(service, 'update').mockRejectedValue({ error: 'error updating ticket' });

@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Model } from './entities/model.entity';
 import { plainToInstance } from 'class-transformer';
 import { ModelDTO } from './dtos/model.dto';
+import { ModelMapper } from './mapper/model.mapper';
 
 describe('ModelService', () => {
   let service: ModelService;
@@ -17,9 +18,12 @@ describe('ModelService', () => {
     save: mockedSave,
     find: mockedFind
   }));
+  const mockedMapper = {
+    transform: jest.fn()
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ModelService, { provide: UtilsService, useValue: mockedUtilsService }, { provide: getRepositoryToken(Model), useFactory: repositoryMockFactory }]
+      providers: [ModelService, { provide: ModelMapper, useValue: mockedMapper }, { provide: UtilsService, useValue: mockedUtilsService }, { provide: getRepositoryToken(Model), useFactory: repositoryMockFactory }]
     }).compile();
     service = module.get<ModelService>(ModelService);
   });
